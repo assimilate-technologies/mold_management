@@ -16,9 +16,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Mold",
+   "label": "Mould",
    "link_count": 0,
-   "link_to": "Mold",
+   "link_to": "Mould",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -26,9 +26,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Mold Maintenance",
+   "label": "Mould Maintenance",
    "link_count": 0,
-   "link_to": "Mold Maintenance",
+   "link_to": "Mould Maintenance",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -36,9 +36,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Mold Maintenance Order",
+   "label": "Mould Maintenance Order",
    "link_count": 0,
-   "link_to": "Mold Maintenance Order",
+   "link_to": "Mould Maintenance Order",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"

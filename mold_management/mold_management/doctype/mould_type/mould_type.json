@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:MLD-TP-{#####}",
+ "creation": "2025-06-06 14:50:49.339209",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "mould_type_name",
+  "type"
+ ],
+ "fields": [
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Type Name",
+   "options": "Injection Moulds\nBlow Moulds\nCompression Moulds\nTransfer Moulds"
+  },
+  {
+   "fieldname": "mould_type_name",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "label": "Mould Type Name"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-09-01 13:24:42.752824",
+ "modified_by": "Administrator",
+ "module": "Mold Management",
+ "name": "Mould Type",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "mould_type_name",
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "mould_type_name"
+}

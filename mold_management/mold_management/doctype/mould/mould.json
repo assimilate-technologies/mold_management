@@ -1,0 +1,268 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:MLD-{#####}",
+ "creation": "2025-06-06 14:52:11.985603",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tab_break_2",
+  "mould_code",
+  "mould_name",
+  "mould_no",
+  "hsn_code",
+  "cavity_count",
+  "is_side_core",
+  "side_core",
+  "location",
+  "last_maintenance_date",
+  "current_usage_count",
+  "tool_pm_plan",
+  "column_break_arav",
+  "status",
+  "item_group",
+  "mould_type",
+  "next_maintenance_due",
+  "mould_life",
+  "balance_mould_life",
+  "maximum_usage_count",
+  "total_shots",
+  "default_warehouse",
+  "company",
+  "hot_runner_system",
+  "cold_runner_system",
+  "mould_size_section",
+  "lenght_mm",
+  "width_mm",
+  "column_break_xbyl",
+  "height_mm",
+  "section_break_pzmn",
+  "mould_history",
+  "remark",
+  "tab_break_1",
+  "critical_parameters"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_break_2",
+   "fieldtype": "Tab Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "cavity_count",
+   "fieldtype": "Float",
+   "label": "No of Cavity"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Select",
+   "label": "Location",
+   "options": "\nTool Room\nOn Machine\nUnder Maintenance"
+  },
+  {
+   "fieldname": "last_maintenance_date",
+   "fieldtype": "Date",
+   "label": "Last Maintenance Date"
+  },
+  {
+   "fieldname": "current_usage_count",
+   "fieldtype": "Data",
+   "label": "Current Usage Count"
+  },
+  {
+   "fieldname": "column_break_arav",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "next_maintenance_due",
+   "fieldtype": "Date",
+   "label": "Next Maintenance Due"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nAvailable\nIn Use\nUnder Maintenance\nIdle\nScrapped\nPlanned"
+  },
+  {
+   "fieldname": "maximum_usage_count",
+   "fieldtype": "Data",
+   "label": "Maximum Usage Count"
+  },
+  {
+   "fieldname": "total_shots",
+   "fieldtype": "Data",
+   "label": "Total Shots"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "tab_break_1",
+   "fieldtype": "Tab Break",
+   "label": "Critical Parameters"
+  },
+  {
+   "fieldname": "critical_parameters",
+   "fieldtype": "Table",
+   "label": "Critical Parameters",
+   "options": "Parameters Table"
+  },
+  {
+   "fieldname": "mould_type",
+   "fieldtype": "Link",
+   "label": "Mould Type",
+   "options": "Mould Type"
+  },
+  {
+   "fieldname": "mould_no",
+   "fieldtype": "Data",
+   "label": "Mould No"
+  },
+  {
+   "fieldname": "mould_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Mould Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "mould_life",
+   "fieldtype": "Data",
+   "label": "Mould Life (Years)"
+  },
+  {
+   "fieldname": "mould_code",
+   "fieldtype": "Data",
+   "label": "Mould Code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "hsn_code",
+   "fieldtype": "Link",
+   "label": "HSN Code",
+   "options": "GST HSN Code"
+  },
+  {
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Group",
+   "options": "Item Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "default_warehouse",
+   "fieldtype": "Link",
+   "label": "Default Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "mould_size_section",
+   "fieldtype": "Section Break",
+   "label": "Mould Size"
+  },
+  {
+   "fieldname": "lenght_mm",
+   "fieldtype": "Float",
+   "label": "Lenght (MM)"
+  },
+  {
+   "fieldname": "width_mm",
+   "fieldtype": "Float",
+   "label": "Width (MM)"
+  },
+  {
+   "fieldname": "column_break_xbyl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "height_mm",
+   "fieldtype": "Float",
+   "label": "Height (MM)"
+  },
+  {
+   "fieldname": "is_side_core",
+   "fieldtype": "Select",
+   "label": "Is Side Core",
+   "options": "\nYes\nNo"
+  },
+  {
+   "depends_on": "eval:doc.is_side_core == \"Yes\"",
+   "fieldname": "side_core",
+   "fieldtype": "Float",
+   "label": "Side Core Nos"
+  },
+  {
+   "fieldname": "hot_runner_system",
+   "fieldtype": "Select",
+   "label": "Hot Runner System",
+   "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "section_break_pzmn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "remark",
+   "fieldtype": "Small Text",
+   "label": "Remark"
+  },
+  {
+   "fieldname": "cold_runner_system",
+   "fieldtype": "Select",
+   "label": "Cold Runner System",
+   "options": "\nYes\nNo"
+  },
+  {
+   "fieldname": "balance_mould_life",
+   "fieldtype": "Data",
+   "label": "Balance Mould Life"
+  },
+  {
+   "fieldname": "tool_pm_plan",
+   "fieldtype": "Data",
+   "label": "Tool PM Plan"
+  },
+  {
+   "fieldname": "mould_history",
+   "fieldtype": "Small Text",
+   "label": "Mould History"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-09-01 15:10:00.083080",
+ "modified_by": "Administrator",
+ "module": "Mold Management",
+ "name": "Mould",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "mould_name",
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "mould_name"
+}

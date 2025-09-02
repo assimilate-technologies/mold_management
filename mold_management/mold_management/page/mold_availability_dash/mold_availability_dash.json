@@ -8,13 +8,13 @@
  "modified": "2025-06-06 16:46:33.776142",
  "modified_by": "Administrator",
  "module": "Mold Management",
- "name": "mold-availability-dash",
+ "name": "mould-availability-dash",
  "owner": "Administrator",
- "page_name": "mold-availability-dash",
+ "page_name": "mould-availability-dash",
  "roles": [],
  "script": null,
  "standard": "Yes",
  "style": null,
  "system_page": 0,
- "title": "Mold Availability Dashboard"
+ "title": "Mould Availability Dashboard"
 }

@@ -1,7 +1,7 @@
 app_name = "mold_management"
-app_title = "Mold Management"
+app_title = "Mould Management"
 app_publisher = "Assimilate Technologies"
-app_description = "For Mold Managment "
+app_description = "For Mould Managment "
 app_email = "info@assimilatetechnologies.com"
 app_license = "mit"
 
@@ -242,9 +242,22 @@ app_license = "mit"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+after_migrate = [
+    
+    
+]
+
+
 
 scheduler_events = {
     "daily": [
-        "mold_management.mold_management.doctype.mold_maintenance_order.mold_maintenance_order.update_mold_maintenance_order_status",
-    ]
+        "mold_management.mold_management.doctype.mould_maintenance_order.mould_maintenance_order.update_mould_maintenance_order_status",
+    ],
+    
+}
+
+doc_events = {
+    "Mould": {
+        "before_insert": "mold_management.api.mould_code_generate_based_on_item_group_prefix.mould_code_generate_by_item_group_prefix"
+    }
 }

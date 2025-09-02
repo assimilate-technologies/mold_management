@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:MLS-{#####}",
+ "creation": "2025-06-08 13:35:56.136163",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "mould_no",
+  "maximum_no_of_shots",
+  "current_shots",
+  "company",
+  "column_break_znwk",
+  "mould_type",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "maximum_no_of_shots",
+   "fieldtype": "Data",
+   "label": "Maximum No Of Shots"
+  },
+  {
+   "fieldname": "current_shots",
+   "fieldtype": "Data",
+   "label": "Current Shots"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "column_break_znwk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "mould_no",
+   "fieldtype": "Link",
+   "label": "Mould No",
+   "options": "Mould"
+  },
+  {
+   "fieldname": "mould_type",
+   "fieldtype": "Link",
+   "label": "Mould Type",
+   "options": "Mould Type"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-09-01 13:23:30.348128",
+ "modified_by": "Administrator",
+ "module": "Mold Management",
+ "name": "Moulds",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

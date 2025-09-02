@@ -37,6 +37,7 @@
   "width_mm",
   "column_break_xbyl",
   "height_mm",
+  "thickness_mm",
   "section_break_pzmn",
   "mould_history",
   "remark",
@@ -233,12 +234,17 @@
    "fieldname": "mould_history",
    "fieldtype": "Small Text",
    "label": "Mould History"
+  },
+  {
+   "fieldname": "thickness_mm",
+   "fieldtype": "Float",
+   "label": "Thickness (MM)"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-01 15:10:00.083080",
+ "modified": "2025-09-02 13:50:20.578038",
  "modified_by": "Administrator",
  "module": "Mold Management",
  "name": "Mould",

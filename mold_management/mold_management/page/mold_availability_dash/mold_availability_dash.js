@@ -1,11 +1,11 @@
-frappe.pages['mold-availability-dash'].on_page_load = async function (wrapper) {
+frappe.pages['mould-availability-dash'].on_page_load = async function (wrapper) {
     const page = frappe.ui.make_app_page({
         parent: wrapper,
-        title: 'Mold Availability Dashboard',
+        title: 'Mould Availability Dashboard',
         single_column: true,
     });
 
-    page.set_title(__('Mold Availability Dashboard'));
+    page.set_title(__('Mould Availability Dashboard'));
 
     // Filters
     const filters_wrapper = $('<div class="mx-4 flex flex-wrap gap-4 mb-4"></div>').appendTo(page.body);
@@ -19,23 +19,23 @@ frappe.pages['mold-availability-dash'].on_page_load = async function (wrapper) {
             },
             render_input: true
         }),
-        mold_type: frappe.ui.form.make_control({
+        mould_type: frappe.ui.form.make_control({
             parent: filters_wrapper,
             df: {
-                label: 'Mold Type',
+                label: 'Mould Type',
                 fieldtype: 'Link',
-                options: 'Mold Type',
-                fieldname: 'mold_type'
+                options: 'Mould Type',
+                fieldname: 'mould_type'
             },
             render_input: true
         }),
-        mold: frappe.ui.form.make_control({
+        mould: frappe.ui.form.make_control({
             parent: filters_wrapper,
             df: {
-                label: 'Mold',
+                label: 'Mould',
                 fieldtype: 'Link',
-                options: 'Mold',
-                fieldname: 'mold'
+                options: 'Mould',
+                fieldname: 'mould'
             },
             render_input: true
         }),
@@ -59,16 +59,16 @@ frappe.pages['mold-availability-dash'].on_page_load = async function (wrapper) {
     const left_col = $(`<div class="cal-2 m-1"></div>`).appendTo(two_col_wrapper);
     const right_col = $(`<div class="cal-2 m-1"></div>`).appendTo(two_col_wrapper);
 
-    // Mold Table
-    const mold_table = $(`<div class="card p-4 mb-2 bg-white dark:bg-gray-900 rounded shadow-md">
-        <h4 class="text-lg font-semibold mb-2">Mold Status Table</h4>
+    // mould Table
+    const mould_table = $(`<div class="card p-4 mb-2 bg-white dark:bg-gray-900 rounded shadow-md">
+        <h4 class="text-lg font-semibold mb-2">Mould Status Table</h4>
         <table class="table table-bordered w-full">
             <thead>
                 <tr>
-                    <th>Mold No</th>
-                    <th>Mold Name</th>
+                    <th>Mould No</th>
+                    <th>Mould Name</th>
                     <th>Status</th>
-                    <th>Mold Type</th>
+                    <th>Mould Type</th>
                     <th>Location</th>
                 </tr>
             </thead>
@@ -80,11 +80,11 @@ frappe.pages['mold-availability-dash'].on_page_load = async function (wrapper) {
     async function refresh_table() {
         let filters_obj = {}; 
 
-        if (filters.mold_type.get_value()) {
-            filters_obj.mold_type = filters.mold_type.get_value();
+        if (filters.mould_type.get_value()) {
+            filters_obj.mould_type = filters.mould_type.get_value();
         }
-        if (filters.mold.get_value()) {
-            filters_obj.name = filters.mold.get_value();
+        if (filters.mould.get_value()) {
+            filters_obj.name = filters.mould.get_value();
         }
         if (filters.status.get_value() && filters.status.get_value() !== 'All') {
             filters_obj.status = filters.status.get_value();
@@ -96,32 +96,32 @@ frappe.pages['mold-availability-dash'].on_page_load = async function (wrapper) {
             }
         }
 
-        const mold_data = await frappe.db.get_list('Mold', {
+        const mould_data = await frappe.db.get_list('Mould', {
             filters: filters_obj,
-            fields: ['name', 'mold_no', 'mold_name', 'mold_type', 'status', 'location'],
+            fields: ['name', 'mould_no', 'mould_name', 'mould_type', 'status', 'location'],
             limit: 1000
         });
 
         // update cards
         cards_wrapper.empty();
 
-        if (!mold_data.length) {
-            cards_wrapper.append(`<div class="text-gray-500">No molds found with current filters.</div>`);
+        if (!mould_data.length) {
+            cards_wrapper.append(`<div class="text-gray-500">No moulds found with current filters.</div>`);
         } else {
-            const counts = mold_data.reduce((acc, mold) => {
+            const counts = mould_data.reduce((acc, mould) => {
                 acc.total++;
-                acc[mold.status] = (acc[mold.status] || 0) + 1;
+                acc[mould.status] = (acc[mould.status] || 0) + 1;
                 return acc;
             }, { total: 0 });
 
             const card_definitions = [
-                { status: null, title: 'Total Molds', count: counts.total },
-                { status: 'Available', title: 'Molds Available', count: counts['Available'] || 0 },
-                { status: 'In Use', title: 'Molds In Use', count: counts['In Use'] || 0 },
-                { status: 'Planned', title: 'Molds Planned', count: counts['Planned'] || 0 },
-                { status: 'Idle', title: 'Molds Idle', count: counts['Idle'] || 0 },
-                { status: 'Scrapped', title: 'Molds Scrapped', count: counts['Scrapped'] || 0 },
-                { status: 'Under Maintenance', title: 'Molds Under Maintenance', count: counts['Under Maintenance'] || 0 }
+                { status: null, title: 'Total moulds', count: counts.total },
+                { status: 'Available', title: 'moulds Available', count: counts['Available'] || 0 },
+                { status: 'In Use', title: 'moulds In Use', count: counts['In Use'] || 0 },
+                { status: 'Planned', title: 'moulds Planned', count: counts['Planned'] || 0 },
+                { status: 'Idle', title: 'moulds Idle', count: counts['Idle'] || 0 },
+                { status: 'Scrapped', title: 'moulds Scrapped', count: counts['Scrapped'] || 0 },
+                { status: 'Under Maintenance', title: 'moulds Under Maintenance', count: counts['Under Maintenance'] || 0 }
             ];
 
             card_definitions.forEach(card => {
@@ -135,41 +135,41 @@ frappe.pages['mold-availability-dash'].on_page_load = async function (wrapper) {
         }
 
         // update table
-        const tbody = mold_table.find('tbody');
+        const tbody = mould_table.find('tbody');
         tbody.empty();
 
-        if (!mold_data.length) {
-            tbody.append('<tr><td colspan="5" class="text-center text-gray-500">No molds found.</td></tr>');
+        if (!mould_data.length) {
+            tbody.append('<tr><td colspan="5" class="text-center text-gray-500">No moulds found.</td></tr>');
             return;
         }
 
-        const moldTypeCache = {};
-        const getMoldTypeName = async (mold_type) => {
-            if (!mold_type) return '';
-            if (moldTypeCache[mold_type]) return moldTypeCache[mold_type];
+        const mouldTypeCache = {};
+        const getmouldTypeName = async (mould_type) => {
+            if (!mould_type) return '';
+            if (mouldTypeCache[mould_type]) return mouldTypeCache[mould_type];
             try {
-                const doc = await frappe.db.get_doc('Mold Type', mold_type);
-                moldTypeCache[mold_type] = doc.mold_type_name;
-                return doc.mold_type_name;
+                const doc = await frappe.db.get_doc('mould Type', mould_type);
+                mouldTypeCache[mould_type] = doc.mould_type_name;
+                return doc.mould_type_name;
             } catch {
-                moldTypeCache[mold_type] = '';
+                mouldTypeCache[mould_type] = '';
                 return '';
             }
         };
 
-        const moldTypeNames = await Promise.all(
-            mold_data.map(mold => getMoldTypeName(mold.mold_type))
+        const mouldTypeNames = await Promise.all(
+            mould_data.map(mould => getmouldTypeName(mould.mould_type))
         );
 
-        mold_data.forEach((mold, index) => {
-            const mold_type_name = moldTypeNames[index] || '';
+        mould_data.forEach((mould, index) => {
+            const mould_type_name = mouldTypeNames[index] || '';
             tbody.append(`
                 <tr>
-                    <td>${mold.mold_no}</td>
-                    <td>${mold.mold_name || ''}</td>
-                    <td><span class="badge ${mold.status === 'Available' ? 'badge-success' : 'badge-danger'}">${mold.status}</span></td>
-                    <td>${mold_type_name || ''}</td>
-                    <td>${mold.location || ''}</td>
+                    <td>${mould.mould_no}</td>
+                    <td>${mould.mould_name || ''}</td>
+                    <td><span class="badge ${mould.status === 'Available' ? 'badge-success' : 'badge-danger'}">${mould.status}</span></td>
+                    <td>${mould_type_name || ''}</td>
+                    <td>${mould.location || ''}</td>
                 </tr>
             `);
         });
@@ -181,7 +181,7 @@ frappe.pages['mold-availability-dash'].on_page_load = async function (wrapper) {
         <table class="table table-bordered w-full">
             <thead>
                 <tr>
-                    <th>Mold</th>
+                    <th>mould</th>
                     <th>Last Used</th>
                     <th>Next Maintenance</th>
                     <th>Current Usage Count</th>
@@ -192,20 +192,20 @@ frappe.pages['mold-availability-dash'].on_page_load = async function (wrapper) {
         </table>
     </div>`).appendTo(left_col);
 
-    const alerts = await frappe.db.get_list('Mold', {
-        fields: ['mold_name', 'last_maintenance_date', 'next_maintenance_due', 'current_usage_count'],
+    const alerts = await frappe.db.get_list('mould', {
+        fields: ['mould_name', 'last_maintenance_date', 'next_maintenance_due', 'current_usage_count'],
         limit: 10
     });
 
     alerts.forEach(row => {
         maintenance_table.find('tbody').append(`
             <tr>
-                <td>${row.mold_name || ''}</td>
+                <td>${row.mould_name || ''}</td>
                 <td>${row.last_maintenance_date || ''}</td>
                 <td>${row.next_maintenance_due || ''}</td>
                 <td>${row.current_usage_count || ''}</td>
                 <td>
-                    <button class="btn btn-xs btn-primary schedule-btn" data-mold-name="${row.mold_name}">
+                    <button class="btn btn-xs btn-primary schedule-btn" data-mould-name="${row.mould_name}">
                         Schedule
                     </button>
                 </td>
@@ -214,20 +214,20 @@ frappe.pages['mold-availability-dash'].on_page_load = async function (wrapper) {
     });
 
     maintenance_table.find('.schedule-btn').on('click', function () {
-        const moldName = $(this).data('mold-name');
+        const mouldName = $(this).data('mould-name');
 
         frappe.call({
             method: "frappe.client.insert",
             args: {
                 doc: {
-                    doctype: "Mold Maintenance",
-                    mold_name: moldName
+                    doctype: "mould Maintenance",
+                    mould_name: mouldName
                 }
             },
             callback: function (r) {
                 if (r.message) {
-                    frappe.msgprint(`Mold Maintenance created for ${moldName}`);
-                    frappe.set_route("Form", "Mold Maintenance", r.message.name);
+                    frappe.msgprint(`mould Maintenance created for ${mouldName}`);
+                    frappe.set_route("Form", "mould Maintenance", r.message.name);
                 }
             }
         });
@@ -237,10 +237,10 @@ frappe.pages['mold-availability-dash'].on_page_load = async function (wrapper) {
     const quick_actions = $(`<div class="card p-4 bg-white dark:bg-gray-800 rounded shadow-md">
         <h4 class="text-lg font-semibold mb-2">Quick Actions</h4>
         <ul class="space-y-2">
-            <li><a class="text-blue-600 hover:underline" href="mold/new-mold-zkkmvibbqa"><i class="fa fa-plus-circle"></i> Add New Mold</a></li>
-            <li><a class="text-blue-600 hover:underline" href="mold-maintenance/new-mold-maintenance-zkkmvibbqa"><i class="fa fa-calendar"></i> Schedule Maintenance</a></li>
-            <li><a class="text-blue-600 hover:underline" href="mold"><i class="fa fa-chart-line"></i> Mold Performance Report</a></li>
-            <li><a class="text-blue-600 hover:underline" href="mold"><i class="fa fa-broom"></i> Request Cleaning</a></li>
+            <li><a class="text-blue-600 hover:underline" href="mould/new-mould-zkkmvibbqa"><i class="fa fa-plus-circle"></i> Add New mould</a></li>
+            <li><a class="text-blue-600 hover:underline" href="mould-maintenance/new-mould-maintenance-zkkmvibbqa"><i class="fa fa-calendar"></i> Schedule Maintenance</a></li>
+            <li><a class="text-blue-600 hover:underline" href="mould"><i class="fa fa-chart-line"></i> mould Performance Report</a></li>
+            <li><a class="text-blue-600 hover:underline" href="mould"><i class="fa fa-broom"></i> Request Cleaning</a></li>
         </ul>
     </div>`).appendTo(right_col);
 

@@ -1,0 +1,109 @@
+{
+ "actions": [],
+ "autoname": "format:MLD-M-{#####}",
+ "creation": "2017-10-19 16:50:22.879545",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "mould_name",
+  "mould_type",
+  "company",
+  "maintenance_team",
+  "section_break_6",
+  "mould_maintenance_tasks",
+  "section_break_7",
+  "required_parts"
+ ],
+ "fields": [
+  {
+   "fieldname": "maintenance_team",
+   "fieldtype": "Select",
+   "label": "Maintenance Team",
+   "options": "\nIn-house\nOut-source"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break",
+   "label": "Tasks"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break",
+   "label": "Required Parts"
+  },
+  {
+   "fieldname": "required_parts",
+   "fieldtype": "Table",
+   "label": "Required Parts",
+   "options": "Required Parts"
+  },
+  {
+   "fieldname": "mould_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Mould Name",
+   "options": "Mould",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fetch_from": "mould_name.mould_type",
+   "fieldname": "mould_type",
+   "fieldtype": "Read Only",
+   "label": "Mould Type"
+  },
+  {
+   "fieldname": "mould_maintenance_tasks",
+   "fieldtype": "Table",
+   "label": "Maintenance Tasks",
+   "options": "Mould Maintenance Task",
+   "reqd": 1
+  }
+ ],
+ "links": [],
+ "modified": "2025-09-01 13:18:33.428431",
+ "modified_by": "Administrator",
+ "module": "Mold Management",
+ "name": "Mould Maintenance",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Quality Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Manufacturing User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

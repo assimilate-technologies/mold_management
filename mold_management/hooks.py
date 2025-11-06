@@ -248,3 +248,4 @@ scheduler_events = {
         "mold_management.mold_management.doctype.mold_maintenance_order.mold_maintenance_order.update_mold_maintenance_order_status",
     ]
 }
+

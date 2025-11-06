@@ -1,0 +1,108 @@
+<div class="daily-production-report-container">
+    <!-- Your HTML pasted here -->
+    <style>
+        /* body { font-family: Arial, sans-serif; margin: 20px; background-color: #fafafa; }*/
+        h3 { margin: 0; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        table, th, td { border: 1px solid #ccc; }
+        th, td { padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; font-weight: bold; }
+        .section-title { background-color: #e6f2ff; font-weight: bold; text-align: left; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .header-table td { border: none; background-color: #fff; }
+        .header-table { border: none; margin-bottom: 10px; }
+        ul { padding: 0; margin: 0; list-style: none; text-align: left; }
+    </style>
+
+    <!-- Header -->
+    <table class="header-table">
+        <tr>
+            <td colspan="2"><strong>ABC Manufacturing Pvt. Ltd.</strong></td>
+            <td colspan="5" style="text-align:center;"><h3>Daily Production Report</h3></td>
+            <td colspan="2">
+                <ul>
+                    <li>Doc No: 12345</li>
+                    <li>Rev No: 01</li>
+                    <li>Page: 1</li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Shift Details -->
+    <table>
+        <tr>
+            <td class="section-title">Shift Details</td><td>I</td>
+            <td class="section-title">Date</td><td>16/06/2025</td>
+            <td class="section-title">Machine No</td><td>1</td>
+        </tr>
+        <tr>
+            <td class="section-title">Product Name</td><td colspan="2">MFSD2 LEO Black RH M/C</td>
+            <td class="section-title">Operator Name</td><td colspan="2">Vijay Kumar</td>
+        </tr>
+        <tr>
+            <td class="section-title">Shot Weight</td><td>300 gm</td>
+            <td class="section-title">Runner Weight</td><td>20 gm</td>
+            <td class="section-title">Item Code No</td><td>13040820974001</td>
+        </tr>
+        <tr>
+            <td class="section-title">Raw Material</td><td>PPGF</td>
+            <td class="section-title">Grade</td><td>4100MN</td>
+            <td class="section-title">Batch No</td><td>P225040357</td>
+        </tr>
+        <tr>
+            <td class="section-title">Masterbatch</td><td>PP Black</td>
+            <td class="section-title">Grade</td><td>9002L</td>
+            <td class="section-title">Batch No</td><td>01.06.2025</td>
+        </tr>
+        <tr>
+            <td class="section-title">First Counter</td><td>1334</td>
+            <td class="section-title">Cycle Time</td><td>80</td>
+            <td class="section-title">Shift Target</td><td>540</td>
+        </tr>
+        <tr>
+            <td class="section-title">Total No Cavity</td><td>1</td>
+            <td class="section-title">Running Cavity</td><td>1</td>
+            <td class="section-title">Anti Static</td><td>VB 9050 - 1.00%</td>
+        </tr>
+    </table>
+
+    <!-- Production Data -->
+    <table>
+        <tr>
+            <th>Time</th>
+            <th>OK Shots</th>
+            <th>Rej Shots</th>
+            <th>Total Shots</th>
+            <th>Rej Code</th>
+            <th>Remarks</th>
+        </tr>
+        <tr><td>08-09</td><td>45</td><td>0</td><td>45</td><td></td><td></td></tr>
+        <tr><td>09-10</td><td>38</td><td>0</td><td>83</td><td></td><td>Total - 1432 Shot</td></tr>
+        <tr><td>10-11</td><td>15/15</td><td>1</td><td>98/16</td><td>04</td><td>Panel change to RH M/C (Item Code: 130408209001)</td></tr>
+        <tr><td>11-12</td><td>44</td><td></td><td>60</td><td></td><td></td></tr>
+        <tr><td>12-01</td><td>44</td><td></td><td>104</td><td></td><td></td></tr>
+        <tr><td>01-02</td><td>43</td><td></td><td>147</td><td></td><td></td></tr>
+        <tr><td>02-03</td><td>40</td><td></td><td>187</td><td></td><td></td></tr>
+        <tr><td>03-04</td><td>40</td><td></td><td>227</td><td></td><td></td></tr>
+        <tr><td>04-05</td><td>44</td><td></td><td>271</td><td></td><td></td></tr>
+        <tr><td>05-06</td><td>42</td><td></td><td>313</td><td></td><td></td></tr>
+        <tr><td>06-07</td><td>30</td><td>1</td><td>344</td><td>04</td><td></td></tr>
+        <tr><td>07-08</td><td>46</td><td></td><td>390</td><td></td><td></td></tr>
+    </table>
+
+    <!-- Summary -->
+    <table>
+        <tr>
+            <td class="section-title">Last Counter</td><td>388</td>
+            <td class="section-title">OK Shots</td><td>388</td>
+            <td class="section-title">Rej Shots</td><td>02</td>
+            <td class="section-title">Total Shots</td><td>390</td>
+        </tr>
+        <tr>
+            <td class="section-title">RM Consumption</td><td>146.400 kg</td>
+            <td class="section-title">Lumps</td><td></td>
+            <td class="section-title">Supervisor Sign</td><td colspan="3">Signed</td>
+        </tr>
+    </table>
+</div>

@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"NVV-IvR9SL\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Mold Management</span>\",\"col\":12}},{\"id\":\"hIBEm5YQIB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Mold Availability Dashboard\",\"col\":3}},{\"id\":\"-CDTAzTYmw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Predictive Dashboard\",\"col\":3}},{\"id\":\"s6Rkp798-b\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"In Process Inspection\",\"col\":3}},{\"id\":\"c_11GKkkVR\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quality Inspection Parameter Report \",\"col\":4}},{\"id\":\"XeJ2MRlpKd\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"5LgiKoc6G9\",\"type\":\"card\",\"data\":{\"card_name\":\"Mold Management\",\"col\":4}},{\"id\":\"z1hZKeflsl\",\"type\":\"card\",\"data\":{\"card_name\":\"Mold Other\",\"col\":4}},{\"id\":\"UBEewf-wG5\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
+ "content": "[{\"id\":\"NVV-IvR9SL\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Mold Management</span>\",\"col\":12}},{\"id\":\"hIBEm5YQIB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Mold Availability Dashboard\",\"col\":3}},{\"id\":\"-CDTAzTYmw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Predictive Dashboard\",\"col\":3}},{\"id\":\"s6Rkp798-b\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"In Process Inspection\",\"col\":3}},{\"id\":\"c_11GKkkVR\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Inspection Production Report \",\"col\":4}},{\"id\":\"XeJ2MRlpKd\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"5LgiKoc6G9\",\"type\":\"card\",\"data\":{\"card_name\":\"Mold Management\",\"col\":4}},{\"id\":\"z1hZKeflsl\",\"type\":\"card\",\"data\":{\"card_name\":\"Mold Other\",\"col\":4}},{\"id\":\"UBEewf-wG5\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
  "creation": "2025-06-08 17:51:04.348546",
  "custom_blocks": [],
  "docstatus": 0,
@@ -106,45 +106,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Mold Other",
-   "link_count": 3,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Mold Parameter",
-   "link_count": 0,
-   "link_to": "Mold Parameter",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Critical Paramerter",
-   "link_count": 0,
-   "link_to": "Critical Paramerter",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Parameter",
-   "link_count": 0,
-   "link_to": "Parameter",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Mold Management",
    "link_count": 7,
    "link_type": "DocType",
@@ -225,7 +186,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Reports",
-   "link_count": 4,
+   "link_count": 5,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -253,9 +214,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Quality Inspection Parameter Report ",
+   "label": "Inspection Production Report ",
    "link_count": 0,
-   "link_to": "q_inspection",
+   "link_to": "i-production-report",
    "link_type": "Page",
    "onboard": 0,
    "type": "Link"
@@ -269,9 +230,68 @@
    "link_type": "Page",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Daily Production Report",
+   "link_count": 0,
+   "link_to": "daily-production-rep",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Mold Other",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Mold Parameter",
+   "link_count": 0,
+   "link_to": "Mold Parameter",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Critical Paramerter",
+   "link_count": 0,
+   "link_to": "Critical Paramerter",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Parameter",
+   "link_count": 0,
+   "link_to": "Parameter",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Mold Production Log",
+   "link_count": 0,
+   "link_to": "Mold Production Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2025-07-10 12:01:30.798386",
+ "modified": "2025-08-26 13:26:14.814612",
  "modified_by": "Administrator",
  "module": "Mold Management",
  "name": "Mold Management",
@@ -286,8 +306,8 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Quality Inspection Parameter Report ",
-   "link_to": "q_inspection",
+   "label": "Inspection Production Report ",
+   "link_to": "i-production-report",
    "type": "Page"
   },
   {

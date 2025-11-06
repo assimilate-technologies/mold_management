@@ -1,0 +1,375 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:DPR-{DD}-{MM}-{YYYY}-{#####}",
+ "creation": "2025-08-14 13:46:36.473236",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "doc_no",
+  "company",
+  "column_break_owtz",
+  "rev_no",
+  "column_break_coua",
+  "page_no",
+  "section_break_ygeg",
+  "quality_inspection",
+  "job_card",
+  "item_code",
+  "product_name",
+  "mold",
+  "column_break_eggj",
+  "report_date",
+  "operator",
+  "operator_name",
+  "column_break_dlpc",
+  "machine_no",
+  "shift",
+  "section_break_gqbx",
+  "shot_weight",
+  "column_break_vcqt",
+  "runner_weight",
+  "column_break_kown",
+  "total_cavity",
+  "section_break_dqty",
+  "column_break_1",
+  "raw_material",
+  "raw_material_batch_no",
+  "masterbatch_batch_no",
+  "masterbatch",
+  "first_counter",
+  "shift_target",
+  "column_break_2",
+  "raw_material_grade",
+  "masterbatch_grade",
+  "running_cavity",
+  "anti_static",
+  "cycle_time",
+  "hourly_target",
+  "section_break_acld",
+  "production_data",
+  "section_break_sysq",
+  "last_counter",
+  "total_shots",
+  "supervisor_sign",
+  "column_break_vftl",
+  "total_ok_shots",
+  "rm_consumption",
+  "column_break_zuvq",
+  "total_rej_shots",
+  "lumps",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_dqty",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Daily Production Log",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "first_counter",
+   "fieldtype": "Data",
+   "label": "First Counter"
+  },
+  {
+   "fetch_from": "quality_inspection.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "product_name",
+   "fieldtype": "Link",
+   "label": "Product Name",
+   "options": "Item"
+  },
+  {
+   "fetch_from": "operator.employee_name",
+   "fieldname": "operator_name",
+   "fieldtype": "Data",
+   "label": "Operator Name"
+  },
+  {
+   "fieldname": "shot_weight",
+   "fieldtype": "Data",
+   "label": "Shot Weight"
+  },
+  {
+   "fieldname": "runner_weight",
+   "fieldtype": "Data",
+   "label": "Runner Weight"
+  },
+  {
+   "fieldname": "masterbatch",
+   "fieldtype": "Link",
+   "label": "Masterbatch",
+   "options": "Item"
+  },
+  {
+   "fieldname": "masterbatch_grade",
+   "fieldtype": "Data",
+   "label": "Masterbatch Grade"
+  },
+  {
+   "fetch_from": "product_name.batch_number_series",
+   "fieldname": "masterbatch_batch_no",
+   "fieldtype": "Link",
+   "label": "Masterbatch Batch No",
+   "options": "Batch"
+  },
+  {
+   "fieldname": "shift_target",
+   "fieldtype": "Int",
+   "label": "Shift Target"
+  },
+  {
+   "fetch_from": "mold.cavity_count",
+   "fieldname": "total_cavity",
+   "fieldtype": "Int",
+   "label": "Total No Cavity"
+  },
+  {
+   "fieldname": "running_cavity",
+   "fieldtype": "Int",
+   "label": "Running Cavity"
+  },
+  {
+   "fieldname": "anti_static",
+   "fieldtype": "Data",
+   "label": "Anti Static"
+  },
+  {
+   "fieldname": "doc_no",
+   "fieldtype": "Data",
+   "label": "Doc No"
+  },
+  {
+   "fieldname": "rev_no",
+   "fieldtype": "Data",
+   "label": "Rev No"
+  },
+  {
+   "fieldname": "page_no",
+   "fieldtype": "Int",
+   "label": "Page No"
+  },
+  {
+   "fetch_from": "quality_inspection.custom_shift",
+   "fieldname": "shift",
+   "fieldtype": "Link",
+   "label": "Shift Details",
+   "options": "Shift Type"
+  },
+  {
+   "fetch_from": "quality_inspection.report_date",
+   "fieldname": "report_date",
+   "fieldtype": "Date",
+   "label": "Date"
+  },
+  {
+   "fetch_from": "job_card.workstation",
+   "fieldname": "machine_no",
+   "fieldtype": "Link",
+   "label": "Machine No",
+   "options": "Workstation"
+  },
+  {
+   "fetch_from": "quality_inspection.item_code",
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "label": "Item Code No",
+   "options": "Item"
+  },
+  {
+   "fieldname": "raw_material",
+   "fieldtype": "Link",
+   "label": "Raw Material",
+   "options": "Item"
+  },
+  {
+   "fieldname": "raw_material_grade",
+   "fieldtype": "Data",
+   "label": "Raw Material Grade"
+  },
+  {
+   "fetch_from": "raw_material.batch_number_series",
+   "fieldname": "raw_material_batch_no",
+   "fieldtype": "Link",
+   "label": "Raw Material Batch No",
+   "options": "Batch"
+  },
+  {
+   "fieldname": "cycle_time",
+   "fieldtype": "Int",
+   "label": "Cycle Time (Sec)"
+  },
+  {
+   "fieldname": "section_break_acld",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "production_data",
+   "fieldtype": "Table",
+   "label": "Production Data",
+   "options": "Production Shots Table"
+  },
+  {
+   "fieldname": "section_break_sysq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "last_counter",
+   "fieldtype": "Data",
+   "label": "Last Counter"
+  },
+  {
+   "fetch_from": "mold.total_shots",
+   "fieldname": "total_shots",
+   "fieldtype": "Data",
+   "label": "Total Shots"
+  },
+  {
+   "fieldname": "supervisor_sign",
+   "fieldtype": "Signature",
+   "label": "Supervisor Sign"
+  },
+  {
+   "fieldname": "column_break_vftl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_ok_shots",
+   "fieldtype": "Data",
+   "label": "Total OK Shots"
+  },
+  {
+   "fieldname": "rm_consumption",
+   "fieldtype": "Data",
+   "label": "RM Consumption"
+  },
+  {
+   "fieldname": "column_break_zuvq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_rej_shots",
+   "fieldtype": "Data",
+   "label": "Total Rej Shots"
+  },
+  {
+   "fieldname": "lumps",
+   "fieldtype": "Data",
+   "label": "Lumps"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_owtz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_coua",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_ygeg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_eggj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_dlpc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_gqbx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_vcqt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_kown",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hourly_target",
+   "fieldtype": "Data",
+   "label": "Hourly Target"
+  },
+  {
+   "fieldname": "operator",
+   "fieldtype": "Link",
+   "label": "Operator",
+   "options": "Employee"
+  },
+  {
+   "fieldname": "quality_inspection",
+   "fieldtype": "Link",
+   "label": "Quality Inspection",
+   "options": "Quality Inspection"
+  },
+  {
+   "fieldname": "mold",
+   "fieldtype": "Link",
+   "label": "Mold",
+   "options": "Mold"
+  },
+  {
+   "fetch_from": "quality_inspection.reference_name",
+   "fieldname": "job_card",
+   "fieldtype": "Link",
+   "label": "Job Card",
+   "options": "Job Card"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-08-26 18:11:57.896670",
+ "modified_by": "Administrator",
+ "module": "Mold Management",
+ "name": "Daily Production Log",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

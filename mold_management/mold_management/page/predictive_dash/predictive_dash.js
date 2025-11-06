@@ -8,7 +8,7 @@ frappe.pages['predictive-dash'].on_page_load = async function (wrapper) {
     const content = $(`<div class="p-4"></div>`).appendTo(page.body);
 
     const table_card = $(`
-        <div class="card p-4 bg-white rounded shadow">
+        <div class="card p-4 bg-white rounded shadow-md">
             <h4 class="text-lg font-semibold mb-4">Predictive Maintenance Data</h4>
             <div class="overflow-auto">
                 <table class="table table-bordered w-full text-sm">

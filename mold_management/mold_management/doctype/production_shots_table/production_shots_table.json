@@ -1,0 +1,73 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-08-14 14:36:44.006705",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "time_slot",
+  "rej_shots",
+  "rej_code",
+  "column_break_llpq",
+  "ok_shots",
+  "total_shots",
+  "remarks"
+ ],
+ "fields": [
+  {
+   "fieldname": "time_slot",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Time Slot"
+  },
+  {
+   "fieldname": "ok_shots",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "OK Shots"
+  },
+  {
+   "fieldname": "rej_shots",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Rej Shots"
+  },
+  {
+   "fieldname": "total_shots",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Shots"
+  },
+  {
+   "fieldname": "rej_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Rej Code"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "column_break_llpq",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-08-14 17:26:58.525335",
+ "modified_by": "Administrator",
+ "module": "Mold Management",
+ "name": "Production Shots Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

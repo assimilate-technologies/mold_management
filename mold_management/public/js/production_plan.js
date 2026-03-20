@@ -84,9 +84,11 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
         <table class="table table-bordered table-condensed">
         <thead>
             <tr>
-                <th style="width: 30%">Operation</th>
-                <th style="width: 35%">Workstation</th>
-                <th style="width: 35%">Mould</th>
+                <th style="width: 25%">Operation</th>
+                <th style="width: 15%">Is Workstation Required</th>
+                <th style="width: 20%">Workstation</th>
+                <th style="width: 15%">Is Mould Required</th>
+                <th style="width: 25%">Mould</th>
             </tr>
         </thead>
         <tbody>`;
@@ -94,7 +96,9 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 	ops.forEach((op, idx) => {
 		html += `<tr data-idx="${idx}">
             <td style="vertical-align: middle;"><b>${op.operation || ""}</b></td>
+            <td class="ws-req-col" style="text-align: center; vertical-align: middle;"></td>
             <td class="ws-col"></td>
+            <td class="mould-req-col" style="text-align: center; vertical-align: middle;"></td>
             <td class="mould-col"></td>
         </tr>`;
 	});
@@ -105,6 +109,34 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 	ops.forEach((op, idx) => {
 		let tr = wrapper.find(`tr[data-idx="${idx}"]`);
 
+		function update_warning() {
+			let current_op = ops[idx];
+			let ws_td = tr.find(".ws-col");
+			let mould_td = tr.find(".mould-col");
+			
+			ws_td.find(".text-danger").remove();
+			mould_td.find(".text-danger").remove();
+
+			if (current_op.is_workstation_required && !current_op.workstation) {
+				ws_td.append('<div class="text-danger small" style="margin-top: 5px;">Workstation is required.</div>');
+			}
+			if (current_op.is_mould_required && !current_op.mould) {
+				mould_td.append('<div class="text-danger small" style="margin-top: 5px;">Mould is required.</div>');
+			}
+		}
+
+		let ws_req_ctrl = frappe.ui.form.make_control({
+			df: {
+				fieldtype: "Check",
+				fieldname: "is_workstation_required_" + idx,
+				read_only: 1,
+			},
+			parent: tr.find(".ws-req-col"),
+			only_input: true,
+		});
+		ws_req_ctrl.make_input();
+		ws_req_ctrl.set_value(op.is_workstation_required);
+
 		let ws_ctrl = frappe.ui.form.make_control({
 			df: {
 				fieldtype: "Link",
@@ -112,6 +144,7 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 				fieldname: "workstation_" + idx,
 				onchange: function () {
 					ops[idx].workstation = this.get_value();
+					update_warning();
 				},
 			},
 			parent: tr.find(".ws-col"),
@@ -120,6 +153,18 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 		ws_ctrl.make_input();
 		ws_ctrl.set_value(op.workstation);
 
+		let mould_req_ctrl = frappe.ui.form.make_control({
+			df: {
+				fieldtype: "Check",
+				fieldname: "is_mould_required_" + idx,
+				read_only: 1,
+			},
+			parent: tr.find(".mould-req-col"),
+			only_input: true,
+		});
+		mould_req_ctrl.make_input();
+		mould_req_ctrl.set_value(op.is_mould_required);
+
 		let mould_ctrl = frappe.ui.form.make_control({
 			df: {
 				fieldtype: "Link",
@@ -127,6 +172,7 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 				fieldname: "mould_" + idx,
 				onchange: function () {
 					ops[idx].mould = this.get_value();
+					update_warning();
 				},
 			},
 			parent: tr.find(".mould-col"),
@@ -134,6 +180,8 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 		});
 		mould_ctrl.make_input();
 		mould_ctrl.set_value(op.mould);
+		
+		update_warning();
 	});
 }
 
@@ -155,7 +203,9 @@ function fetch_bom_operations_for_popup(frm, cdt, cdn, d) {
 				let ops = r.message.operations.map((op) => ({
 					operation: op.operation,
 					workstation: op.workstation,
-					mould: "",
+					mould: op.mould || "",
+					is_mould_required: op.is_mould_required || 0,
+					is_workstation_required: op.is_workstation_required || 0
 				}));
 				render_ops_in_dialog(ops, d, frm, cdt, cdn);
 				frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
@@ -183,7 +233,9 @@ function fetch_bom_operations(frm, cdt, cdn, force_render = false) {
 				let ops = r.message.operations.map((op) => ({
 					operation: op.operation,
 					workstation: op.workstation,
-					mould: "",
+					mould: op.mould || "",
+					is_mould_required: op.is_mould_required || 0,
+					is_workstation_required: op.is_workstation_required || 0
 				}));
 				frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
 				if (force_render) {
@@ -232,9 +284,11 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
         <table class="table table-bordered table-condensed">
         <thead>
             <tr>
-                <th style="width: 30%">Operation</th>
-                <th style="width: 35%">Workstation</th>
-                <th style="width: 35%">Mould</th>
+                <th style="width: 25%">Operation</th>
+                <th style="width: 15%">Is Workstation Required</th>
+                <th style="width: 20%">Workstation</th>
+                <th style="width: 15%">Is Mould Required</th>
+                <th style="width: 25%">Mould</th>
             </tr>
         </thead>
         <tbody>`;
@@ -242,7 +296,9 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 	ops.forEach((op, idx) => {
 		html += `<tr data-idx="${idx}">
             <td style="vertical-align: middle;"><b>${op.operation || ""}</b></td>
+            <td class="ws-req-col" style="text-align: center; vertical-align: middle;"></td>
             <td class="ws-col"></td>
+            <td class="mould-req-col" style="text-align: center; vertical-align: middle;"></td>
             <td class="mould-col"></td>
         </tr>`;
 	});
@@ -253,6 +309,34 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 	ops.forEach((op, idx) => {
 		let tr = wrapper.find(`tr[data-idx="${idx}"]`);
 
+		function update_warning() {
+			let current_op = ops[idx];
+			let ws_td = tr.find(".ws-col");
+			let mould_td = tr.find(".mould-col");
+			
+			ws_td.find(".text-danger").remove();
+			mould_td.find(".text-danger").remove();
+
+			if (current_op.is_workstation_required && !current_op.workstation) {
+				ws_td.append('<div class="text-danger small" style="margin-top: 5px;">Workstation is required.</div>');
+			}
+			if (current_op.is_mould_required && !current_op.mould) {
+				mould_td.append('<div class="text-danger small" style="margin-top: 5px;">Mould is required.</div>');
+			}
+		}
+
+		let ws_req_ctrl = frappe.ui.form.make_control({
+			df: {
+				fieldtype: "Check",
+				fieldname: "form_is_workstation_required_" + idx,
+				read_only: 1,
+			},
+			parent: tr.find(".ws-req-col"),
+			only_input: true,
+		});
+		ws_req_ctrl.make_input();
+		ws_req_ctrl.set_value(op.is_workstation_required);
+
 		let ws_ctrl = frappe.ui.form.make_control({
 			df: {
 				fieldtype: "Link",
@@ -261,6 +345,7 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 				onchange: function () {
 					ops[idx].workstation = this.get_value();
 					frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
+					update_warning();
 				},
 			},
 			parent: tr.find(".ws-col"),
@@ -268,6 +353,18 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 		});
 		ws_ctrl.make_input();
 		ws_ctrl.set_value(op.workstation);
+
+		let mould_req_ctrl = frappe.ui.form.make_control({
+			df: {
+				fieldtype: "Check",
+				fieldname: "form_is_mould_required_" + idx,
+				read_only: 1,
+			},
+			parent: tr.find(".mould-req-col"),
+			only_input: true,
+		});
+		mould_req_ctrl.make_input();
+		mould_req_ctrl.set_value(op.is_mould_required);
 
 		let mould_ctrl = frappe.ui.form.make_control({
 			df: {
@@ -277,6 +374,7 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 				onchange: function () {
 					ops[idx].mould = this.get_value();
 					frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
+					update_warning();
 				},
 			},
 			parent: tr.find(".mould-col"),
@@ -284,5 +382,7 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 		});
 		mould_ctrl.make_input();
 		mould_ctrl.set_value(op.mould);
+
+		update_warning();
 	});
 }

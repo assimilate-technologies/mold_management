@@ -13,6 +13,7 @@ after_migrate = [
      "mold_management.patches.v0_1.create_fields_on_sales_order_item.execute",
      "mold_management.patches.v0_1.create_mould_field_on_job_card.execute",
      "mold_management.patches.v0_1.create_field_is_mold_checkbox_on_jobcard.execute",
+     "mold_management.patches.v0_1.add_requirement_flags_to_job_card.execute",
      "mold_management.patches.v0_1.add_email_sent_90_field_on_mould.execute",
      "mold_management.patches.v0_1.add_fields_on_work_order_item_table.execute",
      "mold_management.patches.v0_1.create_moulds_field_on_bom_item_table.execute",

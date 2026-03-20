@@ -18,7 +18,9 @@ def populate_operations_from_bom(doc, method):
                         ops.append({
                             "operation": op.operation,
                             "workstation": op.workstation,
-                            "mould": "" 
+                            "mould": op.mould or "",
+                            "is_mould_required": op.is_mould_required or 0,
+                            "is_workstation_required": op.is_workstation_required or 0
                         })
                     item.operations_data = json.dumps(ops)
                 except Exception as e:
@@ -83,6 +85,12 @@ def map_production_plan_operations(doc, method=None):
                     wo_op.workstation = custom_op.get("workstation")
                 if custom_op.get("mould"):
                     wo_op.mould = custom_op.get("mould")
+                
+                # Also map the requirement flags
+                if "is_mould_required" in custom_op:
+                    wo_op.is_mould_required = custom_op.get("is_mould_required")
+                if "is_workstation_required" in custom_op:
+                    wo_op.is_workstation_required = custom_op.get("is_workstation_required")
                     
     except Exception as e:
         # We use a broad try-except to ensure 'validate' NEVER blocks document save
@@ -98,14 +106,24 @@ def map_mould_to_job_card(doc, method=None):
         return
 
     try:
-        # Fetch mould and workstation from Work Order Operation row
-        wo_op = frappe.db.get_value("Work Order Operation", doc.operation_id, ["mould", "workstation"], as_dict=1)
+        # Fetch mould, workstation and requirement flags from Work Order Operation row
+        wo_op = frappe.db.get_value("Work Order Operation", doc.operation_id, ["mould", "workstation", "is_mould_required", "is_workstation_required"], as_dict=1)
         
         if wo_op:
             if wo_op.mould:
                 doc.mould = wo_op.mould
             if wo_op.workstation:
                 doc.workstation = wo_op.workstation
+            
+            # Map requirement flags
+            if "is_mould_required" in wo_op:
+                doc.is_mould_required = wo_op.is_mould_required
+                # Use existing field if present
+                if hasattr(doc, "is_mould"):
+                    doc.is_mould = wo_op.is_mould_required
+                    
+            if "is_workstation_required" in wo_op:
+                doc.is_workstation_required = wo_op.is_workstation_required
                 
     except Exception as e:
         frappe.log_error(f"Error mapping mould to Job Card {doc.name}: {str(e)}", "Job Card Mould Mapping")

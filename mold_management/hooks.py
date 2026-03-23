@@ -108,7 +108,10 @@ doc_events = {
         "validate": "mold_management.mold_management.api.quality_inspection.validate_quality_inspection"
     },
     "Production Plan": {
-        "validate": "mold_management.api.production_plan.populate_operations_from_bom"
+        "validate": [
+            "mold_management.api.production_plan.populate_operations_from_bom",
+            "mold_management.api.production_plan.validate_production_plan_operations"
+        ]
     }
 }
 

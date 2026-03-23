@@ -6,6 +6,9 @@ def populate_operations_from_bom(doc, method):
     On validate of Production Plan, automatically fetch operations from the BOM
     for each po_item and sub_assembly_item, if the item has no operations listed.
     """
+    if doc.docstatus == 1:
+        return
+
     for table_name in ["po_items", "sub_assembly_items"]:
         items = doc.get(table_name) or []
         for item in items:
@@ -20,11 +23,74 @@ def populate_operations_from_bom(doc, method):
                             "workstation": op.workstation,
                             "mould": op.mould or "",
                             "is_mould_required": op.is_mould_required or 0,
-                            "is_workstation_required": op.is_workstation_required or 0
+                            "is_workstation_required": op.is_workstation_required or 0,
+                            "is_quality_inspection_required": op.get("is_quality_inspection_required") or 0,
+                            "quality_inspection_template": op.get("quality_inspection_template") or None
                         })
                     item.operations_data = json.dumps(ops)
                 except Exception as e:
                     frappe.log_error(f"Error fetching operations for BOM {item.bom_no}: {str(e)}", "Production Plan BOM Fetch")
+
+def validate_production_plan_operations(doc, method=None):
+    """
+    Validate that all required moulds and workstations are set in operations_data
+    for each item in po_items and sub_assembly_items.
+    Also ensures that operations data is not changed after submission.
+    """
+    for table_name in ["po_items", "sub_assembly_items"]:
+        items = doc.get(table_name) or []
+        for item in items:
+            if not item.get("operations_data"):
+                continue
+
+            # Normalize JSON formatting if doc is submitted to avoid false-positive diff errors
+            if doc.docstatus == 1 and item.name:
+                db_val = frappe.db.get_value(item.doctype, item.name, "operations_data")
+                if db_val:
+                    try:
+                        current_ops = json.loads(item.operations_data)
+                        db_ops = json.loads(db_val)
+                        if current_ops == db_ops:
+                            # If content is identical but formatting differs, normalize to DB value
+                            item.operations_data = db_val
+                        else:
+                            # If content actually changed, throw a user-friendly error
+                            changed_op_name = ""
+                            if len(current_ops) == len(db_ops):
+                                for i in range(len(current_ops)):
+                                    if current_ops[i] != db_ops[i]:
+                                        changed_op_name = current_ops[i].get("operation")
+                                        break
+                            
+                            op_detail = frappe._(" (specifically for operation <b>{0}</b>)").format(changed_op_name) if changed_op_name else ""
+                            frappe.throw(
+                                frappe._("Row #{0}: You are not allowed to change operations for item <b>{1}</b> after submission.{2}").format(
+                                    item.idx, item.get("item_name") or item.get("item_code"), op_detail
+                                )
+                            )
+                    except (json.JSONDecodeError, TypeError):
+                        pass
+
+            try:
+                ops = json.loads(item.operations_data)
+                for op in ops:
+                    op_name = op.get("operation")
+                    item_display = item.get("item_name") or item.get("item_code")
+                    if op.get("is_mould_required") and not op.get("mould"):
+                        frappe.throw(
+                            frappe._("Row #{0}: Mould is required for operation <b>{1}</b> for item {2}").format(
+                                item.idx, op_name, item_display
+                            )
+                        )
+                    if op.get("is_workstation_required") and not op.get("workstation"):
+                        frappe.throw(
+                            frappe._("Row #{0}: Workstation is required for operation <b>{1}</b> for item {2}").format(
+                                item.idx, op_name, item_display
+                            )
+                        )
+            except (json.JSONDecodeError, TypeError):
+                # If parsing fails or data is not a list, we might want to log it or skip
+                continue
 
 def map_production_plan_operations(doc, method=None):
     """

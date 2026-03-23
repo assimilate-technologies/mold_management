@@ -88,12 +88,6 @@ def validate_production_plan_operations(doc, method=None):
                                 item.idx, op_name, item_display
                             )
                         )
-                    if op.get("is_quality_inspection_required") and not op.get("quality_inspection_template"):
-                        frappe.throw(
-                            frappe._("Row #{0}: Quality Inspection Template is required for operation <b>{1}</b> for item {2}").format(
-                                item.idx, op_name, item_display
-                            )
-                        )
             except (json.JSONDecodeError, TypeError):
                 # If parsing fails or data is not a list, we might want to log it or skip
                 continue
@@ -101,65 +95,50 @@ def validate_production_plan_operations(doc, method=None):
 def map_production_plan_operations(doc, method=None):
     """
     Called on before_insert/validate of Work Order.
-    Maps workstation, mould, workstation_type and QI info from Production Plan OR from BOM to Work Order Operations.
+    Maps workstation and mould from Production Plan Item/Sub Assembly Item to Work Order Operations.
     """
     try:
-        if not doc.get("production_plan") and not doc.get("bom_no"):
+        if not doc.get("production_plan"):
             return
 
-        ops_source_data = None
+        # Try to find the source row in Production Plan Item or Sub Assembly Item
+        source_row = None
         
-        # Case 1: From Production Plan
-        if doc.get("production_plan"):
-            source_row = None
-            link_fields = ["production_plan_item", "production_plan_sub_assembly_item", "plan_item"]
-            for field in link_fields:
-                field_val = doc.get(field)
-                if not field_val:
-                    continue
-                    
-                if field == "production_plan_sub_assembly_item":
-                    dt = "Production Plan Sub Assembly Item"
-                else:
-                    dt = "Production Plan Item"
-                    
-                try:
-                    if frappe.db.exists(dt, field_val):
-                        source_row = frappe.get_doc(dt, field_val)
-                        if source_row: break
-                except Exception:
-                    continue
-
-            if source_row and source_row.get("operations_data"):
-                try:
-                    ops_source_data = json.loads(source_row.operations_data)
-                except Exception:
-                    pass
-
-        # Case 2: From BOM directly (if no Production Plan data found)
-        if not ops_source_data and doc.get("bom_no"):
+        # Check all possible link fields for Production Plan entries
+        link_fields = ["production_plan_item", "production_plan_sub_assembly_item", "plan_item"]
+        for field in link_fields:
+            field_val = doc.get(field)
+            if not field_val:
+                continue
+                
+            # Determine the parent doctype
+            if field == "production_plan_sub_assembly_item":
+                dt = "Production Plan Sub Assembly Item"
+            else:
+                dt = "Production Plan Item"
+                
             try:
-                bom = frappe.get_doc("BOM", doc.bom_no)
-                ops_source_data = []
-                for op in bom.operations:
-                    ops_source_data.append({
-                        "operation": op.operation,
-                        "workstation": op.workstation,
-                        "mould": op.mould or "",
-                        "is_mould_required": op.is_mould_required or 0,
-                        "is_workstation_required": op.is_workstation_required or 0,
-                        "is_quality_inspection_required": op.get("is_quality_inspection_required") or 0,
-                        "quality_inspection_template": op.get("quality_inspection_template") or None
-                    })
+                if frappe.db.exists(dt, field_val):
+                    source_row = frappe.get_doc(dt, field_val)
+                    if source_row: break
             except Exception:
-                pass
+                continue
 
-        if not ops_source_data:
+        if not source_row or not source_row.get("operations_data"):
+            return
+
+        ops_data = []
+        try:
+            ops_data = json.loads(source_row.operations_data)
+        except Exception:
+            return
+            
+        if not ops_data or not isinstance(ops_data, list):
             return
 
         # Create a mapping of operation name (normalized) to its details
         op_map = {}
-        for op in ops_source_data:
+        for op in ops_data:
             if isinstance(op, dict) and op.get("operation"):
                 op_name = str(op.get("operation")).strip().lower()
                 op_map[op_name] = op
@@ -168,72 +147,49 @@ def map_production_plan_operations(doc, method=None):
             op_name = str(wo_op.operation or "").strip().lower()
             if op_name in op_map:
                 custom_op = op_map[op_name]
-                
-                # Map workstation and workstation_type
                 if custom_op.get("workstation"):
                     wo_op.workstation = custom_op.get("workstation")
-                    # Fetch workstation_type from Workstation
-                    ws_type = frappe.db.get_value("Workstation", wo_op.workstation, "workstation_type")
-                    if ws_type:
-                        wo_op.workstation_type = ws_type
-                
-                # Map mould
                 if custom_op.get("mould"):
                     wo_op.mould = custom_op.get("mould")
                 
-                # Map requirement flags
+                # Also map the requirement flags
                 if "is_mould_required" in custom_op:
                     wo_op.is_mould_required = custom_op.get("is_mould_required")
                 if "is_workstation_required" in custom_op:
                     wo_op.is_workstation_required = custom_op.get("is_workstation_required")
-                
-                # Map QI fields
-                if "is_quality_inspection_required" in custom_op:
-                    wo_op.is_quality_inspection_required = custom_op.get("is_quality_inspection_required")
-                if "quality_inspection_template" in custom_op:
-                    wo_op.quality_inspection_template = custom_op.get("quality_inspection_template")
                     
     except Exception as e:
-        frappe.log_error(f"Error mapping operations: {str(e)}", "Work Order Op Mapping Error")
+        # We use a broad try-except to ensure 'validate' NEVER blocks document save
+        # even if something goes wrong in the custom mapping logic.
+        frappe.log_error(f"Error mapping operations from Production Plan {doc.get('production_plan')}: {str(e)}", "Work Order Op Mapping Error")
 
 def map_mould_to_job_card(doc, method=None):
     """
     Called on before_insert of Job Card.
-    Maps mould, workstation, workstation_type and QI info from Work Order Operation to Job Card.
+    Maps mould and workstation from Work Order Operation to Job Card.
     """
     if not doc.work_order or not doc.operation_id:
         return
 
     try:
-        # Fetch fields from Work Order Operation row
-        fields = [
-            "mould", "workstation", "workstation_type", 
-            "is_mould_required", "is_workstation_required",
-            "is_quality_inspection_required", "quality_inspection_template"
-        ]
-        wo_op = frappe.db.get_value("Work Order Operation", doc.operation_id, fields, as_dict=1)
+        # Fetch mould, workstation and requirement flags from Work Order Operation row
+        wo_op = frappe.db.get_value("Work Order Operation", doc.operation_id, ["mould", "workstation", "is_mould_required", "is_workstation_required"], as_dict=1)
         
         if wo_op:
             if wo_op.mould:
                 doc.mould = wo_op.mould
             if wo_op.workstation:
                 doc.workstation = wo_op.workstation
-            if wo_op.workstation_type:
-                doc.workstation_type = wo_op.workstation_type
-            if wo_op.quality_inspection_template:
-                doc.quality_inspection_template = wo_op.quality_inspection_template
             
             # Map requirement flags
             if "is_mould_required" in wo_op:
                 doc.is_mould_required = wo_op.is_mould_required
-                if hasattr(doc, "is_mould"):
-                    doc.is_mould = wo_op.is_mould_required
+                # Use existing field if present
+                if hasattr(doc, "is_mould_required"):
+                    doc.is_mould_required = wo_op.is_mould_required
                     
             if "is_workstation_required" in wo_op:
                 doc.is_workstation_required = wo_op.is_workstation_required
                 
-            if "is_quality_inspection_required" in wo_op:
-                doc.is_quality_inspection_required = wo_op.is_quality_inspection_required
-
     except Exception as e:
-        frappe.log_error(f"Error mapping to Job Card {doc.name}: {str(e)}", "Job Card Mapping Error")
+        frappe.log_error(f"Error mapping mould to Job Card {doc.name}: {str(e)}", "Job Card Mould Mapping")

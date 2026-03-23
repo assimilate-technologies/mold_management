@@ -111,7 +111,7 @@ function show_operations_popup(frm, cdt, cdn) {
 		},
 	});
 
-	    render_ops_in_dialog(ops, d, frm, cdt, cdn);
+	render_ops_in_dialog(ops, d, frm, cdt, cdn);
 	d.show();
 }
 
@@ -128,13 +128,11 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
         <table class="table table-bordered table-condensed">
         <thead>
             <tr>
-                <th style="width: 20%">Operation</th>
-                <th style="width: 10%">Workstation Req</th>
-                <th style="width: 15%">Workstation</th>
-                <th style="width: 10%">Mould Req</th>
-                <th style="width: 15%">Mould</th>
-                <th style="width: 10%">QI Req</th>
-                <th style="width: 20%">QI Template</th>
+                <th style="width: 25%">Operation</th>
+                <th style="width: 15%">Is Workstation Required</th>
+                <th style="width: 20%">Workstation</th>
+                <th style="width: 15%">Is Mould Required</th>
+                <th style="width: 25%">Mould</th>
             </tr>
         </thead>
         <tbody>`;
@@ -146,8 +144,6 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
             <td class="ws-col"></td>
             <td class="mould-req-col" style="text-align: center; vertical-align: middle;"></td>
             <td class="mould-col"></td>
-            <td class="qi-req-col" style="text-align: center; vertical-align: middle;"></td>
-            <td class="qi-col"></td>
         </tr>`;
 	});
 
@@ -161,11 +157,9 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 			let current_op = ops[idx];
 			let ws_td = tr.find(".ws-col");
 			let mould_td = tr.find(".mould-col");
-			let qi_td = tr.find(".qi-col");
 			
 			ws_td.find(".text-danger").remove();
 			mould_td.find(".text-danger").remove();
-			qi_td.find(".text-danger").remove();
 
 			if (current_op.is_workstation_required && !current_op.workstation) {
 				ws_td.append('<div class="text-danger small" style="margin-top: 5px;">Workstation is required.</div>');
@@ -173,21 +167,13 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 			if (current_op.is_mould_required && !current_op.mould) {
 				mould_td.append('<div class="text-danger small" style="margin-top: 5px;">Mould is required.</div>');
 			}
-			if (current_op.is_quality_inspection_required && !current_op.quality_inspection_template) {
-				qi_td.append('<div class="text-danger small" style="margin-top: 5px;">QI Template is required.</div>');
-			}
 		}
 
 		let ws_req_ctrl = frappe.ui.form.make_control({
 			df: {
 				fieldtype: "Check",
 				fieldname: "is_workstation_required_" + idx,
-				read_only: 0,
-				onchange: function () {
-					if (frm.doc.docstatus === 1) return;
-					ops[idx].is_workstation_required = this.get_value();
-					update_warning();
-				},
+				read_only: 1,
 			},
 			parent: tr.find(".ws-req-col"),
 			only_input: true,
@@ -217,12 +203,7 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 			df: {
 				fieldtype: "Check",
 				fieldname: "is_mould_required_" + idx,
-				read_only: 0,
-				onchange: function () {
-					if (frm.doc.docstatus === 1) return;
-					ops[idx].is_mould_required = this.get_value();
-					update_warning();
-				},
+				read_only: 1,
 			},
 			parent: tr.find(".mould-req-col"),
 			only_input: true,
@@ -247,41 +228,6 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 		});
 		mould_ctrl.make_input();
 		mould_ctrl.set_value(op.mould);
-
-		let qi_req_ctrl = frappe.ui.form.make_control({
-			df: {
-				fieldtype: "Check",
-				fieldname: "is_quality_inspection_required_" + idx,
-				read_only: 0,
-				onchange: function () {
-					if (frm.doc.docstatus === 1) return;
-					ops[idx].is_quality_inspection_required = this.get_value();
-					update_warning();
-				},
-			},
-			parent: tr.find(".qi-req-col"),
-			only_input: true,
-		});
-		qi_req_ctrl.make_input();
-		qi_req_ctrl.set_value(op.is_quality_inspection_required);
-
-		let qi_ctrl = frappe.ui.form.make_control({
-			df: {
-				fieldtype: "Link",
-				options: "Quality Inspection Template",
-				fieldname: "quality_inspection_template_" + idx,
-				read_only: frm.doc.docstatus === 1,
-				onchange: function () {
-					if (frm.doc.docstatus === 1) return;
-					ops[idx].quality_inspection_template = this.get_value();
-					update_warning();
-				},
-			},
-			parent: tr.find(".qi-col"),
-			only_input: true,
-		});
-		qi_ctrl.make_input();
-		qi_ctrl.set_value(op.quality_inspection_template);
 		
 		update_warning();
 	});
@@ -390,13 +336,11 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
         <table class="table table-bordered table-condensed">
         <thead>
             <tr>
-                <th style="width: 20%">Operation</th>
-                <th style="width: 10%">Workstation Req</th>
-                <th style="width: 15%">Workstation</th>
-                <th style="width: 10%">Mould Req</th>
-                <th style="width: 15%">Mould</th>
-                <th style="width: 10%">QI Req</th>
-                <th style="width: 20%">QI Template</th>
+                <th style="width: 25%">Operation</th>
+                <th style="width: 15%">Is Workstation Required</th>
+                <th style="width: 20%">Workstation</th>
+                <th style="width: 15%">Is Mould Required</th>
+                <th style="width: 25%">Mould</th>
             </tr>
         </thead>
         <tbody>`;
@@ -408,8 +352,6 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
             <td class="ws-col"></td>
             <td class="mould-req-col" style="text-align: center; vertical-align: middle;"></td>
             <td class="mould-col"></td>
-            <td class="qi-req-col" style="text-align: center; vertical-align: middle;"></td>
-            <td class="qi-col"></td>
         </tr>`;
 	});
 
@@ -423,11 +365,9 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 			let current_op = ops[idx];
 			let ws_td = tr.find(".ws-col");
 			let mould_td = tr.find(".mould-col");
-			let qi_td = tr.find(".qi-col");
 			
 			ws_td.find(".text-danger").remove();
 			mould_td.find(".text-danger").remove();
-			qi_td.find(".text-danger").remove();
 
 			if (current_op.is_workstation_required && !current_op.workstation) {
 				ws_td.append('<div class="text-danger small" style="margin-top: 5px;">Workstation is required.</div>');
@@ -435,22 +375,13 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 			if (current_op.is_mould_required && !current_op.mould) {
 				mould_td.append('<div class="text-danger small" style="margin-top: 5px;">Mould is required.</div>');
 			}
-			if (current_op.is_quality_inspection_required && !current_op.quality_inspection_template) {
-				qi_td.append('<div class="text-danger small" style="margin-top: 5px;">QI Template is required.</div>');
-			}
 		}
 
 		let ws_req_ctrl = frappe.ui.form.make_control({
 			df: {
 				fieldtype: "Check",
 				fieldname: "form_is_workstation_required_" + idx,
-				read_only: 0,
-				onchange: function () {
-					if (frm.doc.docstatus === 1) return;
-					ops[idx].is_workstation_required = this.get_value();
-					frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
-					update_warning();
-				},
+				read_only: 1,
 			},
 			parent: tr.find(".ws-req-col"),
 			only_input: true,
@@ -481,13 +412,7 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 			df: {
 				fieldtype: "Check",
 				fieldname: "form_is_mould_required_" + idx,
-				read_only: 0,
-				onchange: function () {
-					if (frm.doc.docstatus === 1) return;
-					ops[idx].is_mould_required = this.get_value();
-					frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
-					update_warning();
-				},
+				read_only: 1,
 			},
 			parent: tr.find(".mould-req-col"),
 			only_input: true,
@@ -514,44 +439,6 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 		mould_ctrl.make_input();
 		mould_ctrl.set_value(op.mould);
 
-		let qi_req_ctrl = frappe.ui.form.make_control({
-			df: {
-				fieldtype: "Check",
-				fieldname: "form_is_quality_inspection_required_" + idx,
-				read_only: 0,
-				onchange: function () {
-					if (frm.doc.docstatus === 1) return;
-					ops[idx].is_quality_inspection_required = this.get_value();
-					frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
-					update_warning();
-				},
-			},
-			parent: tr.find(".qi-req-col"),
-			only_input: true,
-		});
-		qi_req_ctrl.make_input();
-		qi_req_ctrl.set_value(op.is_quality_inspection_required);
-
-		let qi_ctrl = frappe.ui.form.make_control({
-			df: {
-				fieldtype: "Link",
-				options: "Quality Inspection Template",
-				fieldname: "form_quality_inspection_template_" + idx,
-				read_only: frm.doc.docstatus === 1,
-				onchange: function () {
-					if (frm.doc.docstatus === 1) return;
-					ops[idx].quality_inspection_template = this.get_value();
-					frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
-					update_warning();
-				},
-			},
-			parent: tr.find(".qi-col"),
-			only_input: true,
-		});
-		qi_ctrl.make_input();
-		qi_ctrl.set_value(op.quality_inspection_template);
-
 		update_warning();
 	});
 }
-

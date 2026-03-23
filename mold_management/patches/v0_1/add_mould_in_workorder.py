@@ -25,7 +25,7 @@ def execute():
 
     try:
         create_custom_field("Work Order", field_is_moulding)
-        # create_custom_field("Work Order", field_mould)
+        create_custom_field("Work Order", field_mould)
         frappe.clear_cache()
     except Exception as e:
         frappe.log_error(f"Error adding mould fields to Work Order: {str(e)}", "add_mould_in_workorder")

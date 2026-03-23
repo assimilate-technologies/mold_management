@@ -3,6 +3,46 @@ frappe.ui.form.on("Production Plan", {
 		add_manage_ops_actions(frm, "po_items");
 		add_manage_ops_actions(frm, "sub_assembly_items");
 	},
+	before_save: function (frm) {
+		let errors = [];
+		["po_items", "sub_assembly_items"].forEach(field => {
+			(frm.doc[field] || []).forEach(item => {
+				if (item.operations_data) {
+					try {
+						let ops = JSON.parse(item.operations_data);
+						ops.forEach(op => {
+							if (op.is_mould_required && !op.mould) {
+								errors.push(__("Table {0}, Row #{1}: Mould is required for operation <b>{2}</b> for item {3}", [
+									field === "po_items" ? "Assembly Items" : "Sub Assembly Items",
+									item.idx,
+									op.operation,
+									item.item_name || item.item_code
+								]));
+							}
+							if (op.is_workstation_required && !op.workstation) {
+								errors.push(__("Table {0}, Row #{1}: Workstation is required for operation <b>{2}</b> for item {3}", [
+									field === "po_items" ? "Assembly Items" : "Sub Assembly Items",
+									item.idx,
+									op.operation,
+									item.item_name || item.item_code
+								]));
+							}
+						});
+					} catch (e) {
+						// ignore errors here, wait for server if it's really broken
+					}
+				}
+			});
+		});
+
+		if (errors.length > 0) {
+			frappe.throw({
+				title: __("Missing Operations Requirements"),
+				message: errors.join("<br>"),
+				indicator: "orange"
+			});
+		}
+	}
 });
 
 function add_manage_ops_actions(frm, field_name) {
@@ -61,6 +101,10 @@ function show_operations_popup(frm, cdt, cdn) {
 		],
 		primary_action_label: __("Update"),
 		primary_action: function () {
+			if (frm.doc.docstatus === 1) {
+				d.hide();
+				return;
+			}
 			frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
 			render_operations_html(frm, cdt, cdn, true);
 			d.hide();
@@ -142,7 +186,9 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 				fieldtype: "Link",
 				options: "Workstation",
 				fieldname: "workstation_" + idx,
+				read_only: frm.doc.docstatus === 1,
 				onchange: function () {
+					if (frm.doc.docstatus === 1) return;
 					ops[idx].workstation = this.get_value();
 					update_warning();
 				},
@@ -170,7 +216,9 @@ function render_ops_in_dialog(ops, d, frm, cdt, cdn) {
 				fieldtype: "Link",
 				options: "Mould",
 				fieldname: "mould_" + idx,
+				read_only: frm.doc.docstatus === 1,
 				onchange: function () {
+					if (frm.doc.docstatus === 1) return;
 					ops[idx].mould = this.get_value();
 					update_warning();
 				},
@@ -205,7 +253,9 @@ function fetch_bom_operations_for_popup(frm, cdt, cdn, d) {
 					workstation: op.workstation,
 					mould: op.mould || "",
 					is_mould_required: op.is_mould_required || 0,
-					is_workstation_required: op.is_workstation_required || 0
+					is_workstation_required: op.is_workstation_required || 0,
+					is_quality_inspection_required: op.is_quality_inspection_required || 0,
+					quality_inspection_template: op.quality_inspection_template || null
 				}));
 				render_ops_in_dialog(ops, d, frm, cdt, cdn);
 				frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
@@ -235,7 +285,9 @@ function fetch_bom_operations(frm, cdt, cdn, force_render = false) {
 					workstation: op.workstation,
 					mould: op.mould || "",
 					is_mould_required: op.is_mould_required || 0,
-					is_workstation_required: op.is_workstation_required || 0
+					is_workstation_required: op.is_workstation_required || 0,
+					is_quality_inspection_required: op.is_quality_inspection_required || 0,
+					quality_inspection_template: op.quality_inspection_template || null
 				}));
 				frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
 				if (force_render) {
@@ -342,7 +394,9 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 				fieldtype: "Link",
 				options: "Workstation",
 				fieldname: "form_workstation_" + idx,
+				read_only: frm.doc.docstatus === 1,
 				onchange: function () {
+					if (frm.doc.docstatus === 1) return;
 					ops[idx].workstation = this.get_value();
 					frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
 					update_warning();
@@ -371,7 +425,9 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 				fieldtype: "Link",
 				options: "Mould",
 				fieldname: "form_mould_" + idx,
+				read_only: frm.doc.docstatus === 1,
 				onchange: function () {
+					if (frm.doc.docstatus === 1) return;
 					ops[idx].mould = this.get_value();
 					frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
 					update_warning();

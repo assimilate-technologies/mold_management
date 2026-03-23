@@ -13,7 +13,6 @@ after_migrate = [
      "mold_management.patches.v0_1.create_fields_on_sales_order_item.execute",
      "mold_management.patches.v0_1.create_mould_field_on_job_card.execute",
      "mold_management.patches.v0_1.create_field_is_mold_checkbox_on_jobcard.execute",
-     "mold_management.patches.v0_1.add_requirement_flags_to_job_card.execute",
      "mold_management.patches.v0_1.add_email_sent_90_field_on_mould.execute",
      "mold_management.patches.v0_1.add_fields_on_work_order_item_table.execute",
      "mold_management.patches.v0_1.create_moulds_field_on_bom_item_table.execute",
@@ -28,7 +27,6 @@ after_migrate = [
      "mold_management.patches.v0_1.create_is_customer_and_maintain_stock_fixed_asset_on_work_order.execute",
      "mold_management.patches.v0_1.add_work_order_routing_field_on_work_order.execute",
      "mold_management.patches.v0_1.add_mould_to_work_order_operation.execute",
-
      # fields and section on item doctype
      "mold_management.patches.v0_1.add_mould_detail_tab_on_item_master.execute",
     #  "mold_management.patches.v0_1.add_selection_of_tool_on_item.execute",
@@ -37,16 +35,12 @@ after_migrate = [
      "mold_management.patches.v0_1.add_packing_details_tab_on_item.execute",
      "mold_management.patches.v0_1.add_part_specification_tab_on_item.execute",
      "mold_management.patches.v0_1.add_rework_and_checking_details.execute",
-     
      "mold_management.patches.v0_1.add_is_mold_item_field_on_item.execute",
      "mold_management.patches.v0_1.add_is_moulding_item_checkbox_on_item.execute",
      "mold_management.patches.v0_1.add_other_than_mould_or_moulding_item.execute",
      "mold_management.patches.v0_1.add_mould_in_workorder.execute",
-     "mold_management.patches.v0_1.add_shift_field_to_work_order.execute",
-     "mold_management.patches.v0_1.add_sampling_fields_to_qi_template.execute",
-     "mold_management.patches.v0_1.add_fields_to_qir_quality_inspection.execute",
-     "mold_management.patches.v0_1.add_field_on_qi_time_slot.execute",
-     "mold_management.patches.v0_1.add_in_process_inspection_template_to_item.execute"
+     "mold_management.patches.v0_1.add_shift_field_to_work_order.execute"
+
 
     
 ]
@@ -114,7 +108,10 @@ doc_events = {
         "validate": "mold_management.mold_management.api.quality_inspection.validate_quality_inspection"
     },
     "Production Plan": {
-        "validate": "mold_management.api.production_plan.populate_operations_from_bom"
+        "validate": [
+            "mold_management.api.production_plan.populate_operations_from_bom",
+            "mold_management.api.production_plan.validate_production_plan_operations"
+        ]
     }
 }
 

@@ -14,14 +14,14 @@ def execute():
     }
 
     # Mould link field, visible only when the fetched is_moulding is checked
-    # field_mould = {
-    #     "fieldname": "mould",
-    #     "label": "Mould",
-    #     "fieldtype": "Link",
-    #     "options": "Mould",
-    #     "insert_after": "is_moulding",
-    #     "depends_on": "eval:doc.is_moulding == 1"
-    # }
+    field_mould = {
+        "fieldname": "mould",
+        "label": "Mould",
+        "fieldtype": "Link",
+        "options": "Mould",
+        "insert_after": "is_moulding",
+        "depends_on": "eval:doc.is_moulding == 1"
+    }
 
     try:
         create_custom_field("Work Order", field_is_moulding)

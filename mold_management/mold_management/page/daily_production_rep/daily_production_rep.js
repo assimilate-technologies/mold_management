@@ -215,7 +215,7 @@ frappe.pages["daily-production-rep"].on_page_show = function (wrapper) {
 
                 <div class="rejection-codes">
                     <strong class="label-cell" style="background:transparent; border:none; padding:0;">Defect Codes:</strong><br>
-                    ${(doc.rejection_codes_list || []).map((c) => `${c.name}${c.description ? " - " + c.description : ""}`).join(", ")}
+                    ${(doc.rejection_codes_list || []).map((c) => `${c.name}${c.rejection_name ? " - " + c.rejection_name : ""}`).join(", ")}
                 </div>
             </div>
         `;

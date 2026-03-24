@@ -26,7 +26,7 @@ def get_production_log_details(name=None):
         doc_dict["rm_uom"] = ""
     
     # Fetch Rejection Codes (Quality Inspection Parameters)
-    params = frappe.get_all("Quality Inspection Parameter", fields=["name", "description"])
+    params = frappe.get_all("Rejection Code", fields=["name", "rejection_name"])
     doc_dict["rejection_codes_list"] = params
     
     return doc_dict
@@ -184,7 +184,7 @@ def download_pdf(name):
 
             <div class="rejection-codes">
                 <strong style="font-size: 8px; color: #444;">DEFECT CODES:</strong><br/>
-                {", ".join([f"{c['name']}{' - ' + c['description'] if c.get('description') else ''}" for c in doc.get('rejection_codes_list', [])])}
+                {", ".join([f"{c['name']}{' - ' + c['rejection_name'] if c.get('rejection_name') else ''}" for c in doc.get('rejection_codes_list', [])])}
             </div>
         </div>
     </body>
@@ -430,7 +430,7 @@ def download_excel(name):
     # Rejection Codes
     curr_row += 2
     ws.merge_cells(f'A{curr_row}:J{curr_row+1}')
-    rej_codes_text = "DEFECT CODES: " + ", ".join([f"{c['name']}{' - ' + c['description'] if c.get('description') else ''}" for c in doc.get('rejection_codes_list', [])])
+    rej_codes_text = "DEFECT CODES: " + ", ".join([f"{c['name']}{' - ' + c['rejection_name'] if c.get('rejection_name') else ''}" for c in doc.get('rejection_codes_list', [])])
     ws['A'+str(curr_row)] = rej_codes_text
     apply_style(f'A{curr_row}:J{curr_row+1}', font=value_font, border=all_border, align=left_align)
 

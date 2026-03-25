@@ -19,6 +19,7 @@ def execute():
         "label": "Mould",
         "fieldtype": "Link",
         "options": "Mould",
+        "hidden": 1,
         "insert_after": "is_moulding",
         "depends_on": "eval:doc.is_moulding == 1"
     }

@@ -5,8 +5,10 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 		single_column: true,
 	});
 
-	const route_options = frappe.get_route_options();
+	const route_options = frappe.route_options;
 	const reference_name = route_options ? route_options.reference_name : "";
+	const route_template = route_options ? route_options.quality_inspection_template : "";
+	frappe.route_options = null; // Clear it after reading
 
 	$(`
 		<div class="row mb-4 no-print">
@@ -14,8 +16,11 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 				<div id="reference_filter"></div>
 			</div>
 			<div class="col-md-4">
-				<button class="btn btn-primary btn-sm mt-1" id="btn-refresh"><i class="fa fa-refresh"></i> Refresh</button>
-				<button class="btn btn-secondary btn-sm mt-1" id="btn-print"><i class="fa fa-print"></i> Print</button>
+				<div id="template_filter"></div>
+			</div>
+			<div class="col-md-4 d-flex align-items-end">
+				<button class="btn btn-primary btn-sm me-2" id="btn-refresh" style="margin-bottom: 2px;"><i class="fa fa-refresh"></i> Refresh</button>
+				<button class="btn btn-secondary btn-sm" id="btn-print" style="margin-bottom: 2px;"><i class="fa fa-print"></i> Print</button>
 			</div>
 		</div>
 		
@@ -89,8 +94,9 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 		</style>
 	`).appendTo(page.body);
 
-	const field = page.add_field(
-		{
+	const field = frappe.ui.form.make_control({
+		parent: $(wrapper).find("#reference_filter"),
+		df: {
 			label: "Reference (Job Card / DPL / WO)",
 			fieldname: "reference_name",
 			fieldtype: "Link",
@@ -98,42 +104,62 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 			default: reference_name,
 			onchange: () => load_report_data(),
 		},
-		$("#reference_filter"),
-	);
+		render_input: true
+	});
 
-	$("#btn-refresh").on("click", () => load_report_data());
-	$("#btn-print").on("click", () => window.print());
+	const template_field = frappe.ui.form.make_control({
+		parent: $(wrapper).find("#template_filter"),
+		df: {
+			label: "Quality Inspection Template",
+			fieldname: "quality_inspection_template",
+			fieldtype: "Link",
+			options: "Quality Inspection Template", 
+			default: route_template,
+			onchange: () => load_report_data(),
+		},
+		render_input: true
+	});
+
+	$(wrapper).find("#btn-refresh").on("click", () => load_report_data());
+	$(wrapper).find("#btn-print").on("click", () => window.print());
 
 	load_report_data();
 
 	async function load_report_data() {
-		const ref = page.fields_dict.reference_name.get_value();
+		const ref = field && typeof field.get_value === 'function' ? field.get_value() : "";
+		const template = template_field && typeof template_field.get_value === 'function' ? template_field.get_value() : null;
 		
-		$("#report-container").html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Generating Report...</p></div>');
+		$(wrapper).find("#report-container").html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Generating Report...</p></div>');
 
 		try {
 			const response = await frappe.call({
 				method: "mold_management.mold_management.page.in_process_inspectio.in_process_inspectio.get_report_data",
-				args: { reference_name: ref },
+				args: { reference_name: ref, quality_inspection_template: template },
 			});
 
 			const data = response.message;
 			if (!data || !data.length) {
-				$("#report-container").html(
+				$(wrapper).find("#report-container").html(
 					'<div class="alert alert-warning text-center">No data found for the selected reference.</div>',
 				);
 				return;
 			}
 
 			// Sync field value if it was a default load
-			if (!ref && data[0].job_card) {
-				page.fields_dict.reference_name.set_value(data[0].job_card.name);
+			if (!ref && data[0].job_card && field && typeof field.set_value === 'function') {
+				field.set_value(data[0].job_card.name);
+			}
+			
+			if (data[0].template_name && template_field && typeof template_field.get_value === 'function') {
+                if (template_field.get_value() !== data[0].template_name) {
+				    template_field.set_value(data[0].template_name);
+                }
 			}
 
 			render_report(data);
 		} catch (err) {
 			console.error(err);
-			$("#report-container").html(
+			$(wrapper).find("#report-container").html(
 				'<div class="alert alert-danger">Error fetching report data. Check browser console.</div>',
 			);
 		}
@@ -163,8 +189,8 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 		const empty_cols = Array(min_empty_cols).fill({});
 		const all_cols = inspections.concat(empty_cols);
 		
-		const dynamic_headers_top = all_cols.map(qi => `<th class="text-center">${qi.inspection_type || "INP"}</th>`).join("");
-		const dynamic_headers_time = all_cols.map(qi => `<th class="text-center">${qi.time_slot || "TIME"}</th>`).join("");
+		const dynamic_headers_obs = all_cols.map((qi, i) => `<th class="text-center">${i + 1}</th>`).join("");
+		const dynamic_headers_time = all_cols.map(qi => `<th class="text-center">${qi.time_slot || "-"}</th>`).join("");
 
 		let html = `
 			<div class="inspection-sheet-wrapper">
@@ -175,6 +201,7 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 						</td>
 						<td colspan="4" rowspan="4" class="text-center" style="width: 50%;">
 							<h1 class="sheet-title">Inprocess Inspection Sheet</h1>
+							<div style="font-size: 13px; font-weight: bold; margin-top: 5px; color: #555;">${data.template_name || ''}</div>
 						</td>
 						<td colspan="2" class="header-label">Doc No:</td>
 						<td colspan="2" class="header-value">${jc.name}</td>
@@ -207,21 +234,24 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 						<td class="header-label">RM :</td><td class="header-value">${item.raw_material || ""}</td>
 						<td class="header-label">MB :</td><td class="header-value">${item.masterbatch || ""}</td>
 						<td class="header-label">OPERATOR NAME :</td><td class="header-value">${operator}</td>
-						<td class="header-label">SHIFT :</td><td colspan="2" class="header-value">${jc.custom_shift || ""}</td>
+						<td class="header-label">SHIFT :</td><td colspan="2" class="header-value">${jc.shift || ""}</td>
 					</tr>
 				</table>
 
 				<table class="inspection-sheet" style="margin-top: -1px;">
 					<thead>
 						<tr class="table-header">
-							<th style="width: 40px;">Sr.no</th>
-							<th style="width: 280px;">Parameter</th>
-							<th style="width: 140px;">Specification and Tolerance</th>
-							<th style="width: 140px;">Equipment Name and Least count</th>
-							${dynamic_headers_top}
+							<th style="width: 40px;" rowspan="2">Sr.no</th>
+							<th style="width: 280px;" rowspan="2">Parameter</th>
+							<th style="width: 140px;" rowspan="2">Tolerance</th>
+							<th style="width: 140px;" rowspan="2">Equipment Name and Least count</th>
+							<th colspan="${all_cols.length}" class="text-center">Observation</th>
 						</tr>
 						<tr class="table-header">
-							<th colspan="4" class="text-center" style="background: #fcfcfc;">TIME</th>
+							${dynamic_headers_obs}
+						</tr>
+						<tr class="table-header">
+							<th colspan="4" class="text-center" style="background: #fcfcfc;">TIME SLOT:</th>
 							${dynamic_headers_time}
 						</tr>
 					</thead>
@@ -271,20 +301,31 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 	}
 
 	function render_parameter_row(p, index, inspections, total_display_cols) {
-		let spec_text = p.value || "";
-		if (p.numeric) {
-			spec_text = `${p.min_value} - ${p.max_value}`;
-            // If we have a nominal value and tolerance
-            if (p.nominal_value && p.tolerance) {
-                spec_text = `${p.nominal_value} ± ${p.tolerance}`;
-            } else if (p.min_value && p.max_value) {
-                const nominal = (flt(p.min_value) + flt(p.max_value)) / 2;
-                const tol = (flt(p.max_value) - flt(p.min_value)) / 2;
-                spec_text = `${nominal.toFixed(2)} ± ${tol.toFixed(2)}`;
-            }
+		let spec_text = p.value || p.acceptance_criteria_value || p.acceptance_criteria || "";
+		
+		if (p.numeric || (p.min_value != null && p.max_value != null && p.min_value !== "" && p.max_value !== "")) {
+			if (p.min_value != null && p.max_value != null && p.min_value !== "" && p.max_value !== "") {
+				// Generate ± format automatically based on MIN and MAX
+				const nom = (parseFloat(p.min_value) + parseFloat(p.max_value)) / 2;
+				const tol = (parseFloat(p.max_value) - parseFloat(p.min_value)) / 2;
+				if (!isNaN(nom) && !isNaN(tol) && tol > 0) {
+					spec_text = `${nom.toFixed(2)} ± ${tol.toFixed(2)}`;
+				} else {
+					spec_text = `${p.min_value} - ${p.max_value}`;
+				}
+			} else if (p.min_value != null && p.min_value !== "") {
+				spec_text = `Min: ${p.min_value}`;
+			} else if (p.max_value != null && p.max_value !== "") {
+				spec_text = `Max: ${p.max_value}`;
+			}
 		}
 
-		const equipment = `${p.equipment || ""}${p.least_count ? ' (' + p.least_count + ')' : ''}`;
+		// Always fallback to acceptance criteria value string if defined and no numeric ranges exist
+		if (!spec_text && (p.value || p.acceptance_criteria_value || p.acceptance_criteria)) {
+			spec_text = p.value || p.acceptance_criteria_value || p.acceptance_criteria;
+		}
+
+		const equipment = `${p.parameter_group || p.equipment || ""}${p.least_count ? ' (' + p.least_count + ')' : ''}`;
 
 		let cells = "";
 		for (let i = 0; i < total_display_cols; i++) {
@@ -293,9 +334,12 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 			let style = "";
 			
 			if (qi) {
-				const reading = qi.readings ? qi.readings.find(r => r.specification === p.specification) : null;
+				const paramSpec = (p.specification || "").trim();
+				const reading = qi.readings ? qi.readings.find(r => (r.specification || "").trim() === paramSpec) : null;
+				
 				if (reading) {
-					val = reading.reading_1 || reading.reading_value || "";
+					// Different types of quality inspections store readings in different fields
+					val = reading.reading_1 || reading.reading_value || reading.value || "";
 					if (reading.status === "Rejected") style = "status-rejected";
 				} else {
                     val = "-";

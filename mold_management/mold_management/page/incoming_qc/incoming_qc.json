@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2026-03-31 14:40:00",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "module": "Mold Management",
+ "modified": "2026-03-31 14:40:00",
+ "name": "incoming-qc",
+ "owner": "Administrator",
+ "page_name": "incoming-qc",
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ],
+ "standard": "Yes",
+ "title": "Incoming QC Report"
+}

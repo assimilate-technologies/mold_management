@@ -56,7 +56,7 @@ def build_sheet_data(jc, wo, custom_template=None):
     # Fetch Quality Inspections linked to this Job Card
     # Map them to time slots
     inspections = frappe.get_all("Quality Inspection",
-        filters={"reference_name": jc.name, "docstatus": ["<", 2], "inspection_type": ["in", ["In Process", "FPA", "LPA", "Final"]]},
+        filters={"reference_name": jc.name, "docstatus": 1, "inspection_type": ["in", ["In Process", "FPA", "LPA", "Final"]]},
         fields=["name", "report_date", "inspected_by", "time_slot", "inspection_type", "quality_inspection_template"],
         order_by="time_slot asc"
     )
@@ -85,16 +85,16 @@ def build_sheet_data(jc, wo, custom_template=None):
         operator = jc.employees[0].employee_name
     elif jc.get("operator"):
         operator = frappe.db.get_value("Employee", jc.operator, "employee_name") or jc.operator
-
+    
+    # Inspection metadata (take from first inspection if available)
+    first_qi = inspections[0] if inspections else {}
+    vendor = first_qi.get("vendor_name") or first_qi.get("vendor") or ""
+    qty = first_qi.get("sample_size") or ""
+    
     # Try to find batch from Daily Production Logs if not on Job Card
-    batch_no = jc.batch_no
+    batch_no = jc.get("batch_no")
     if not batch_no:
-        batch_no = frappe.db.get_value("Daily Production Log", {"job_card": jc.name}, "batch_no")
-
-    # Shift Fallback
-    shift = jc.get("custom_shift") or jc.get("shift")
-    if not shift and wo:
-        shift = wo.get("custom_shift") or wo.get("shift")
+        batch_no = frappe.db.get_value("Daily Production Log", {"job_card": jc.name}, "raw_material_batch_no")
 
     return {
         "job_card": {
@@ -103,14 +103,15 @@ def build_sheet_data(jc, wo, custom_template=None):
             "mould": jc.mould,
             "batch_no": batch_no,
             "workstation": jc.workstation,
-            "shift": shift,
-            "work_order": jc.work_order
+            "shift": wo.get("shift") if wo else jc.get("shift"),
+            "work_order": jc.work_order,
+            "bom": jc.get("bom_no")
         },
         "item": {
             "item_name": item.item_name,
-            "model": item.get("model"),
-            "raw_material": item.get("raw_material"),
-            "masterbatch": item.get("masterbatch"),
+            "model": item.get("model") or item.get("custom_model") or "",
+            "raw_material": wo.get("raw_material") if wo and wo.get("raw_material") else item.get("raw_material"),
+            "masterbatch": wo.get("masterbatch") if wo and wo.get("masterbatch") else item.get("masterbatch"),
             "rev_no": item.get("rev_no"),
             "page_no": item.get("page_no")
         },
@@ -118,5 +119,7 @@ def build_sheet_data(jc, wo, custom_template=None):
         "parameters": parameters,
         "inspections": inspections,
         "operator": operator,
+        "vendor": vendor,
+        "qty": qty,
         "today": nowdate()
     }

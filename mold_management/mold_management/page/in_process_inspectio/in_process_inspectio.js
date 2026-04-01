@@ -84,12 +84,36 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 			.signature-box { height: 70px; border-top: none !important; }
 			
 			@media print {
+				@page { 
+					size: A4 landscape; 
+					margin: 5mm; 
+				}
 				.no-print { display: none !important; }
-				.report-container { padding: 0; background: #fff; }
-				.inspection-sheet-wrapper { padding: 0; border: none; box-shadow: none; margin: 0; max-width: 100%; }
-				body { background: #fff !important; }
+				.report-container { padding: 0; background: #fff; height: auto !important; min-height: 0 !important; }
+				.inspection-sheet-wrapper { 
+					padding: 0; 
+					border: none; 
+					box-shadow: none; 
+					margin: 0; 
+					width: 100%;
+					max-width: none; 
+					transform: scale(1.0); /* Adjust if needed */
+					transform-origin: top left;
+				}
+				body { background: #fff !important; margin: 0; padding: 0; }
 				.page-break { page-break-after: always; }
-				.inspection-sheet th, .inspection-sheet td { border: 1px solid #000 !important; }
+				.inspection-sheet th, .inspection-sheet td { 
+					border: 1px solid #000 !important; 
+					padding: 2px 4px !important; /* Extremely compact */
+					font-size: 8px !important;
+					line-height: 1.1 !important;
+				}
+				.header-label { font-size: 8.5px !important; padding: 2px 4px !important; background-color: #f0f0f0 !important; }
+				.header-value { font-size: 9px !important; padding: 2px 4px !important; }
+				.logo-text { font-size: 16px !important; font-weight: 800 !important; }
+				.sheet-title { font-size: 14px !important; }
+				.section-header { font-size: 9px !important; padding: 3px 6px !important; }
+				.logo-cell { padding: 2px !important; }
 			}
 		</style>
 	`).appendTo(page.body);
@@ -100,11 +124,11 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 			label: "Reference (Job Card / DPL / WO)",
 			fieldname: "reference_name",
 			fieldtype: "Link",
-			options: "Job Card", 
+			options: "Job Card",
 			default: reference_name,
 			onchange: () => load_report_data(),
 		},
-		render_input: true
+		render_input: true,
 	});
 
 	const template_field = frappe.ui.form.make_control({
@@ -113,23 +137,41 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 			label: "Quality Inspection Template",
 			fieldname: "quality_inspection_template",
 			fieldtype: "Link",
-			options: "Quality Inspection Template", 
+			options: "Quality Inspection Template",
 			default: route_template,
+			get_query: () => {
+				return {
+					filters: {
+						inspection_type: "In Process",
+					},
+				};
+			},
 			onchange: () => load_report_data(),
 		},
-		render_input: true
+		render_input: true,
 	});
 
-	$(wrapper).find("#btn-refresh").on("click", () => load_report_data());
-	$(wrapper).find("#btn-print").on("click", () => window.print());
+	$(wrapper)
+		.find("#btn-refresh")
+		.on("click", () => load_report_data());
+	$(wrapper)
+		.find("#btn-print")
+		.on("click", () => window.print());
 
 	load_report_data();
 
 	async function load_report_data() {
-		const ref = field && typeof field.get_value === 'function' ? field.get_value() : "";
-		const template = template_field && typeof template_field.get_value === 'function' ? template_field.get_value() : null;
-		
-		$(wrapper).find("#report-container").html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Generating Report...</p></div>');
+		const ref = field && typeof field.get_value === "function" ? field.get_value() : "";
+		const template =
+			template_field && typeof template_field.get_value === "function"
+				? template_field.get_value()
+				: null;
+
+		$(wrapper)
+			.find("#report-container")
+			.html(
+				'<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Generating Report...</p></div>',
+			);
 
 		try {
 			const response = await frappe.call({
@@ -139,29 +181,37 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 
 			const data = response.message;
 			if (!data || !data.length) {
-				$(wrapper).find("#report-container").html(
-					'<div class="alert alert-warning text-center">No data found for the selected reference.</div>',
-				);
+				$(wrapper)
+					.find("#report-container")
+					.html(
+						'<div class="alert alert-warning text-center">No data found for the selected reference.</div>',
+					);
 				return;
 			}
 
 			// Sync field value if it was a default load
-			if (!ref && data[0].job_card && field && typeof field.set_value === 'function') {
+			if (!ref && data[0].job_card && field && typeof field.set_value === "function") {
 				field.set_value(data[0].job_card.name);
 			}
-			
-			if (data[0].template_name && template_field && typeof template_field.get_value === 'function') {
-                if (template_field.get_value() !== data[0].template_name) {
-				    template_field.set_value(data[0].template_name);
-                }
+
+			if (
+				data[0].template_name &&
+				template_field &&
+				typeof template_field.get_value === "function"
+			) {
+				if (template_field.get_value() !== data[0].template_name) {
+					template_field.set_value(data[0].template_name);
+				}
 			}
 
 			render_report(data);
 		} catch (err) {
 			console.error(err);
-			$(wrapper).find("#report-container").html(
-				'<div class="alert alert-danger">Error fetching report data. Check browser console.</div>',
-			);
+			$(wrapper)
+				.find("#report-container")
+				.html(
+					'<div class="alert alert-danger">Error fetching report data. Check browser console.</div>',
+				);
 		}
 	}
 
@@ -185,88 +235,94 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 		const operator = data.operator;
 
 		// Column configuration
-		const min_empty_cols = Math.max(0, 7 - inspections.length);
+		const min_empty_cols = Math.max(0, 10 - inspections.length);
 		const empty_cols = Array(min_empty_cols).fill({});
 		const all_cols = inspections.concat(empty_cols);
-		
-		const dynamic_headers_obs = all_cols.map((qi, i) => `<th class="text-center">${i + 1}</th>`).join("");
-		const dynamic_headers_time = all_cols.map(qi => `<th class="text-center">${qi.time_slot || "-"}</th>`).join("");
+
+		const dynamic_headers_obs = all_cols
+			.map((qi, i) => `<th class="text-center">${i + 1}</th>`)
+			.join("");
+		const dynamic_headers_time = all_cols
+			.map((qi) => `<th class="text-center">${qi.time_slot || ""}</th>`)
+			.join("");
 
 		let html = `
 			<div class="inspection-sheet-wrapper">
 				<table class="inspection-sheet">
 					<tr>
-						<td rowspan="4" class="text-center logo-cell" style="width: 12%;">
+						<td rowspan="2" class="text-center logo-cell" style="width: 12%;">
 							<div class="logo-text">EXIDE</div>
 						</td>
-						<td colspan="4" rowspan="4" class="text-center" style="width: 50%;">
-							<h1 class="sheet-title">Inprocess Inspection Sheet</h1>
-							<div style="font-size: 13px; font-weight: bold; margin-top: 5px; color: #555;">${data.template_name || ''}</div>
+						<td colspan="4" rowspan="2" class="text-center" style="width: 50%;">
+							<h1 class="sheet-title">FPA/Inprocess Inspection Report</h1>
+							<div style="font-size: 11px; margin-top: 5px; color: #555;">${data.template_name || ""}</div>
 						</td>
-						<td colspan="2" class="header-label">Doc No:</td>
-						<td colspan="2" class="header-value">${jc.name}</td>
+						<td class="header-label" style="width: 120px;">Doc No:</td>
+						<td class="header-value">${jc.name}</td>
 					</tr>
 					<tr>
-						<td colspan="2" class="header-label">Rev no & Dt:</td>
-						<td colspan="2" class="header-value">${item.rev_no || "00"} / ${data.today}</td>
-					</tr>
-					<tr>
-						<td colspan="2" class="header-label">Page:</td>
-						<td colspan="2" class="header-value">1 of 1</td>
-					</tr>
-					<tr>
-						<td colspan="4"></td>
+						<td class="header-label">Rev No & Date:</td>
+						<td class="header-value"></td>
 					</tr>
 
 					<tr>
-						<td class="header-label">Part number :</td><td class="header-value">${jc.production_item}</td>
-						<td class="header-label">ITEM CODE NO:</td><td class="header-value">${jc.production_item}</td>
-						<td class="header-label">Part Name :</td><td colspan="2" class="header-value">${item.item_name || ""}</td>
-						<td class="header-label" style="width: 10%;">Model :</td><td class="header-value">${item.model || ""}</td>
+						<td class="header-label">Part number :</td><td colspan="2" class="header-value">${jc.production_item}</td>
+						<td class="header-label">Part Name :</td><td class="header-value">${item.item_name || ""}</td>
+						<td class="header-label">Model :</td><td class="header-value">${item.model || ""}</td>
 					</tr>
 					<tr>
-						<td class="header-label">mold No :</td><td class="header-value">${jc.mould || ""}</td>
-						<td class="header-label">BATCH NO :</td><td class="header-value">${jc.batch_no || ""}</td>
-						<td class="header-label">Machine number:</td><td class="header-value">${jc.workstation || ""}</td>
-						<td class="header-label">Inspection Date :</td><td colspan="2" class="header-value">${data.today}</td>
+						<td class="header-label">Control Plan No:</td><td colspan="2" class="header-value">${jc.bom || "YPEW/OP&C/F - 03"}</td>
+						<td class="header-label">Machine Number :</td><td class="header-value">${jc.workstation || ""}</td>
+						<td class="header-label">Date :</td><td class="header-value">${data.today}</td>
 					</tr>
 					<tr>
-						<td class="header-label">RM :</td><td class="header-value">${item.raw_material || ""}</td>
-						<td class="header-label">MB :</td><td class="header-value">${item.masterbatch || ""}</td>
-						<td class="header-label">OPERATOR NAME :</td><td class="header-value">${operator}</td>
-						<td class="header-label">SHIFT :</td><td colspan="2" class="header-value">${jc.shift || ""}</td>
+						<td class="header-label">Mold No :</td><td class="header-value">${jc.mould || ""}</td>
+						<td class="header-label">Batch No :</td><td class="header-value">${jc.batch_no || ""}</td>
+						<td class="header-label">Operator Name : &ensp; ${operator}</td>
+						<td class="header-label">Shift :</td><td class="header-value">${jc.shift || ""}</td>
+					</tr>
+					<tr>
+						<td class="header-label">RM & Grade :</td><td colspan="2" class="header-value">${item.raw_material || ""}</td>
+						<td class="header-label" colspan="2">MB :</td><td colspan="2" class="header-value">${item.masterbatch || ""}</td>
 					</tr>
 				</table>
 
 				<table class="inspection-sheet" style="margin-top: -1px;">
 					<thead>
 						<tr class="table-header">
-							<th style="width: 40px;" rowspan="2">Sr.no</th>
-							<th style="width: 280px;" rowspan="2">Parameter</th>
-							<th style="width: 140px;" rowspan="2">Tolerance</th>
-							<th style="width: 140px;" rowspan="2">Equipment Name and Least count</th>
+							<th style="width: 40px;" rowspan="3">Sr.no</th>
+							<th style="width: 250px;" rowspan="3">Parameter</th>
+							<th style="width: 150px;" rowspan="3">Specification and Tolerance</th>
+							<th style="width: 150px;" rowspan="3">Equipment Name and Least count</th>
 							<th colspan="${all_cols.length}" class="text-center">Observation</th>
 						</tr>
 						<tr class="table-header">
 							${dynamic_headers_obs}
 						</tr>
 						<tr class="table-header">
-							<th colspan="4" class="text-center" style="background: #fcfcfc;">TIME SLOT:</th>
+							
 							${dynamic_headers_time}
 						</tr>
 					</thead>
 					<tbody>
 						${render_parameters_by_group(parameters, inspections, all_cols.length)}
-						${render_total_reject_row(inspections, all_cols.length)}
+						
 					</tbody>
 				</table>
 
-				<table class="inspection-sheet" style="margin-top: -1px;">
-					<tr>
-						<td style="width: 240px; border-top: none !important;" class="header-label text-center signature-box">QC INSPECTOR SIGNATURE</td>
-						<td colspan="${all_cols.length}" class="signature-box" style="border-top: none !important;"></td>
-					</tr>
-				</table>
+				<div style="margin-top: 10px; font-size: 9px; line-height: 1.5; font-weight: bold;">
+					Note 1 : In - process frequency is once in a 2 hrs. <br>
+					2 : If any visual defects found, it should be written in observation coloumns.
+				</div>
+
+				<div class="row" style="margin-top: 30px;">
+					<div class="col-6">
+						<div style="border-top: 1px solid #000; display: inline-block; min-width: 150px; text-align: center; font-size: 10px; font-weight: bold;">Inspector(QA ENGG)</div>
+					</div>
+					<div class="col-6 text-right">
+						<div style="border-top: 1px solid #000; display: inline-block; min-width: 150px; text-align: center; font-size: 10px; font-weight: bold;">Plant Head</div>
+					</div>
+				</div>
 			</div>
 		`;
 
@@ -274,110 +330,137 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 	}
 
 	function render_parameters_by_group(parameters, inspections, total_display_cols) {
-		const dimensional = parameters.filter(p => p.parameter_group === "Dimensional");
-		const visual = parameters.filter(p => p.parameter_group === "Visual");
-		const others = parameters.filter(p => p.parameter_group !== "Dimensional" && p.parameter_group !== "Visual");
+		const dimensional = parameters.filter((p) => p.parameter_group === "Dimensional");
+		const visual = parameters.filter((p) => p.parameter_group === "Visual");
+		const others = parameters.filter(
+			(p) => p.parameter_group !== "Dimensional" && p.parameter_group !== "Visual",
+		);
 
 		let html = "";
 
 		if (dimensional.length) {
 			html += `<tr><td colspan="${total_display_cols + 4}" class="section-header">A. Dimensional Parameters</td></tr>`;
-			dimensional.forEach((p, i) => html += render_parameter_row(p, i + 1, inspections, total_display_cols));
+			dimensional.forEach(
+				(p, i) =>
+					(html += render_parameter_row(p, i + 1, inspections, total_display_cols)),
+			);
 		}
 
 		if (visual.length) {
 			html += `<tr><td colspan="${total_display_cols + 4}" class="section-header">B. Visual Parameters</td></tr>`;
-			visual.forEach((p, i) => html += render_parameter_row(p, i + 1, inspections, total_display_cols));
+			visual.forEach(
+				(p, i) =>
+					(html += render_parameter_row(p, i + 1, inspections, total_display_cols)),
+			);
 		}
 
 		if (others.length && others.length !== parameters.length) {
 			html += `<tr><td colspan="${total_display_cols + 4}" class="section-header">C. Other Parameters</td></tr>`;
-			others.forEach((p, i) => html += render_parameter_row(p, i + 1, inspections, total_display_cols));
+			others.forEach(
+				(p, i) =>
+					(html += render_parameter_row(p, i + 1, inspections, total_display_cols)),
+			);
 		} else if (parameters.length > 0 && dimensional.length === 0 && visual.length === 0) {
-            parameters.forEach((p, i) => html += render_parameter_row(p, i + 1, inspections, total_display_cols));
-        }
+			parameters.forEach(
+				(p, i) =>
+					(html += render_parameter_row(p, i + 1, inspections, total_display_cols)),
+			);
+		}
 
 		return html;
 	}
 
 	function render_parameter_row(p, index, inspections, total_display_cols) {
-		let spec_text = p.value || p.acceptance_criteria_value || p.acceptance_criteria || "";
-		
-		if (p.numeric || (p.min_value != null && p.max_value != null && p.min_value !== "" && p.max_value !== "")) {
-			if (p.min_value != null && p.max_value != null && p.min_value !== "" && p.max_value !== "") {
-				// Generate ± format automatically based on MIN and MAX
-				const nom = (parseFloat(p.min_value) + parseFloat(p.max_value)) / 2;
-				const tol = (parseFloat(p.max_value) - parseFloat(p.min_value)) / 2;
-				if (!isNaN(nom) && !isNaN(tol) && tol > 0) {
-					spec_text = `${nom.toFixed(2)} ± ${tol.toFixed(2)}`;
+		let spec_text = "";
+		let criteria = (
+			p.acceptance_criteria ||
+			p.acceptance_criteria_value ||
+			p.value ||
+			p.tolerance ||
+			""
+		).trim();
+		let range = "";
+
+		if (
+			p.numeric ||
+			(p.min_value != null &&
+				p.max_value != null &&
+				p.min_value !== "" &&
+				p.max_value !== "")
+		) {
+			const min_val = parseFloat(p.min_value);
+			const max_val = parseFloat(p.max_value);
+
+			if (!isNaN(min_val) && !isNaN(max_val) && (min_val !== 0 || max_val !== 0)) {
+				const nom = (min_val + max_val) / 2;
+				const tol = (max_val - min_val) / 2;
+				if (tol > 0) {
+					range = `${nom.toFixed(2)} ± ${tol.toFixed(2)}`;
 				} else {
-					spec_text = `${p.min_value} - ${p.max_value}`;
+					range = `${p.min_value} - ${p.max_value}`;
 				}
-			} else if (p.min_value != null && p.min_value !== "") {
-				spec_text = `Min: ${p.min_value}`;
-			} else if (p.max_value != null && p.max_value !== "") {
-				spec_text = `Max: ${p.max_value}`;
+			} else if (
+				p.min_value != null &&
+				p.min_value !== "" &&
+				parseFloat(p.min_value) !== 0
+			) {
+				range = `Min: ${p.min_value}`;
+			} else if (
+				p.max_value != null &&
+				p.max_value !== "" &&
+				parseFloat(p.max_value) !== 0
+			) {
+				range = `Max: ${p.max_value}`;
 			}
 		}
 
-		// Always fallback to acceptance criteria value string if defined and no numeric ranges exist
-		if (!spec_text && (p.value || p.acceptance_criteria_value || p.acceptance_criteria)) {
-			spec_text = p.value || p.acceptance_criteria_value || p.acceptance_criteria;
+		// Final decision on Tolerance display
+		if (criteria && range && criteria.trim().toLowerCase() !== range.trim().toLowerCase()) {
+			spec_text = `${criteria} (${range})`;
+		} else {
+			spec_text = criteria || range || "-";
 		}
 
-		const equipment = `${p.parameter_group || p.equipment || ""}${p.least_count ? ' (' + p.least_count + ')' : ''}`;
+		const equipment = `${p.parameter_group || p.equipment || ""}${p.least_count ? " (" + p.least_count + ")" : ""}`;
 
 		let cells = "";
 		for (let i = 0; i < total_display_cols; i++) {
 			const qi = inspections[i];
 			let val = "";
 			let style = "";
-			
+
 			if (qi) {
 				const paramSpec = (p.specification || "").trim();
-				const reading = qi.readings ? qi.readings.find(r => (r.specification || "").trim() === paramSpec) : null;
-				
+				const reading = qi.readings
+					? qi.readings.find((r) => (r.specification || "").trim() === paramSpec)
+					: null;
+
 				if (reading) {
-					// Different types of quality inspections store readings in different fields
-					val = reading.reading_1 || reading.reading_value || reading.value || "";
+					// Show BOTH reading_1 and reading_value if both are present and different
+					const r1 = reading.reading_1 || "";
+					const rv = reading.reading_value || reading.value || "";
+
+					if (r1 && rv && r1.trim().toLowerCase() !== rv.trim().toLowerCase()) {
+						val = `${r1} / ${rv}`;
+					} else {
+						val = r1 || rv || "-";
+					}
+
 					if (reading.status === "Rejected") style = "status-rejected";
 				} else {
-                    val = "-";
-                }
+					val = "-";
+				}
 			}
-			
+
 			cells += `<td class="text-center ${style}" style="min-width: 60px;">${val}</td>`;
 		}
 
 		return `
 			<tr class="param-row">
-				<td class="text-center">${index.toString().padStart(2, '0')}</td>
+				<td class="text-center">${index.toString().padStart(2, "0")}</td>
 				<td>${p.specification}</td>
 				<td class="text-center">${spec_text}</td>
 				<td class="text-center">${equipment}</td>
-				${cells}
-			</tr>
-		`;
-	}
-
-	function render_total_reject_row(inspections, total_display_cols) {
-		let cells = "";
-		for (let i = 0; i < total_display_cols; i++) {
-			const qi = inspections[i];
-			let val = "";
-			if (qi) {
-				const reading = qi.readings ? qi.readings.find(r => r.specification.includes("Total Rej")) : null;
-				val = reading ? (reading.reading_1 || reading.reading_value || "0") : "0";
-			}
-			cells += `<td class="text-center text-bold">${val}</td>`;
-		}
-
-		return `
-			<tr class="param-row">
-				<td></td>
-				<td class="text-bold">Total Rej / Set Up Rej (set)</td>
-				<td></td>
-				<td></td>
 				${cells}
 			</tr>
 		`;

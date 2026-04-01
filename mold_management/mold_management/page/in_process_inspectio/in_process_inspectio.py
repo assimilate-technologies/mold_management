@@ -3,7 +3,7 @@ from frappe import _
 from frappe.utils import nowdate, flt
 
 @frappe.whitelist()
-def get_report_data(reference_name=None):
+def get_report_data(reference_name=None, quality_inspection_template=None):
     if not reference_name:
         # Get the latest Job Card as default
         latest_jc = frappe.db.get_value("Job Card", {"docstatus": ["<", 2]}, "name", order_by="creation desc")
@@ -45,16 +45,26 @@ def get_report_data(reference_name=None):
     for jc_data in job_cards:
         # Convert to Document if it's a dictionary from get_all
         jc = frappe.get_doc("Job Card", jc_data.name) if isinstance(jc_data, dict) else jc_data
-        sheet = build_sheet_data(jc, work_order)
+        sheet = build_sheet_data(jc, work_order, quality_inspection_template)
         report_data.append(sheet)
 
     return report_data
 
-def build_sheet_data(jc, wo):
+def build_sheet_data(jc, wo, custom_template=None):
     item = frappe.get_doc("Item", jc.production_item)
     
+    # Fetch Quality Inspections linked to this Job Card
+    # Map them to time slots
+    inspections = frappe.get_all("Quality Inspection",
+        filters={"reference_name": jc.name, "docstatus": 1, "inspection_type": ["in", ["In Process", "FPA", "LPA", "Final"]]},
+        fields=["name", "report_date", "inspected_by", "time_slot", "inspection_type", "quality_inspection_template"],
+        order_by="time_slot asc"
+    )
+
+    qi_template = inspections[0].quality_inspection_template if inspections and inspections[0].get("quality_inspection_template") else None
+    
     # Fetch Template
-    template_name = item.get("in_process_inspection_template") or item.get("quality_inspection_template")
+    template_name = custom_template or qi_template or jc.get("quality_inspection_template") or item.get("in_process_inspection_template") or item.get("quality_inspection_template")
     parameters = []
     if template_name:
         parameters = frappe.get_all("Item Quality Inspection Parameter",
@@ -63,18 +73,10 @@ def build_sheet_data(jc, wo):
             order_by="idx"
         )
 
-    # Fetch Quality Inspections linked to this Job Card
-    # Map them to time slots
-    inspections = frappe.get_all("Quality Inspection",
-        filters={"reference_name": jc.name, "docstatus": 1, "inspection_type": ["in", ["In Process", "FPA", "LPA", "Final"]]},
-        fields=["name", "report_date", "inspected_by", "time_slot", "inspection_type"],
-        order_by="time_slot asc"
-    )
-
     for qi in inspections:
         qi.readings = frappe.get_all("Quality Inspection Reading",
             filters={"parent": qi.name},
-            fields=["specification", "reading_value", "reading_1", "status"]
+            fields=["*"]
         )
 
     # Header Data
@@ -83,11 +85,16 @@ def build_sheet_data(jc, wo):
         operator = jc.employees[0].employee_name
     elif jc.get("operator"):
         operator = frappe.db.get_value("Employee", jc.operator, "employee_name") or jc.operator
-
+    
+    # Inspection metadata (take from first inspection if available)
+    first_qi = inspections[0] if inspections else {}
+    vendor = first_qi.get("vendor_name") or first_qi.get("vendor") or ""
+    qty = first_qi.get("sample_size") or ""
+    
     # Try to find batch from Daily Production Logs if not on Job Card
-    batch_no = jc.batch_no
+    batch_no = jc.get("batch_no")
     if not batch_no:
-        batch_no = frappe.db.get_value("Daily Production Log", {"job_card": jc.name}, "batch_no")
+        batch_no = frappe.db.get_value("Daily Production Log", {"job_card": jc.name}, "raw_material_batch_no")
 
     return {
         "job_card": {
@@ -96,19 +103,23 @@ def build_sheet_data(jc, wo):
             "mould": jc.mould,
             "batch_no": batch_no,
             "workstation": jc.workstation,
-            "custom_shift": jc.get("custom_shift"),
-            "work_order": jc.work_order
+            "shift": wo.get("shift") if wo else jc.get("shift"),
+            "work_order": jc.work_order,
+            "bom": jc.get("bom_no")
         },
         "item": {
             "item_name": item.item_name,
-            "model": item.get("model"),
-            "raw_material": item.get("raw_material"),
-            "masterbatch": item.get("masterbatch"),
+            "model": item.get("model") or item.get("custom_model") or "",
+            "raw_material": wo.get("raw_material") if wo and wo.get("raw_material") else item.get("raw_material"),
+            "masterbatch": wo.get("masterbatch") if wo and wo.get("masterbatch") else item.get("masterbatch"),
             "rev_no": item.get("rev_no"),
             "page_no": item.get("page_no")
         },
+        "template_name": template_name,
         "parameters": parameters,
         "inspections": inspections,
         "operator": operator,
+        "vendor": vendor,
+        "qty": qty,
         "today": nowdate()
     }

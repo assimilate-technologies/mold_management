@@ -3,27 +3,65 @@ from frappe import _
 from frappe.utils import nowdate, flt
 
 @frappe.whitelist()
+def get_template_from_ref(ref_type, ref_name):
+    if not ref_type or not ref_name:
+        return None
+        
+    if ref_type == "Quality Inspection":
+        return frappe.db.get_value("Quality Inspection", ref_name, "quality_inspection_template")
+    
+    if ref_type == "Purchase Receipt":
+        # First, check if there's already a Quality Inspection linked to this PR
+        linked_template = frappe.db.get_value("Quality Inspection", 
+            {"reference_name": ref_name, "docstatus": ["<", 2]}, 
+            "quality_inspection_template"
+        )
+        if linked_template:
+            return linked_template
+
+        # Fallback: Get template from the first item in the purchase receipt
+        pr_item = frappe.get_all("Purchase Receipt Item", 
+            filters={"parent": ref_name}, 
+            fields=["item_code"], 
+            limit=1
+        )
+        if pr_item:
+            return frappe.db.get_value("Item", pr_item[0].item_code, "quality_inspection_template")
+            
+    return None
+
+@frappe.whitelist()
+@frappe.whitelist()
 def get_report_data(reference_name=None, quality_inspection_template=None):
     if not reference_name:
-        # Get latest Incoming Quality Inspection as default
-        latest_qi = frappe.db.get_value("Quality Inspection", {"inspection_type": ["in", ["Incoming", "PDI"]], "docstatus": ["<", 2]}, "name", order_by="creation desc")
-        if not latest_qi:
+        # Show empty preview with latest Incoming/PDI template parameters
+        latest_template = frappe.db.get_value("Quality Inspection Template", 
+            {"inspection_type": ["in", ["Incoming", "PDI"]]}, "name", order_by="creation desc")
+        if not latest_template:
             return []
-        reference_name = latest_qi
+        
+        # Build empty sheet
+        dummy_qi = frappe._dict({
+            "name": "", "item_code": "", "quality_inspection_template": latest_template,
+            "readings": [], "doc_no": "YPEW/QA-F-02", "rev_no": "00", "rev_date": "01.02.2021"
+        })
+        return [build_sheet_data(dummy_qi, latest_template)]
 
     # Identify if it's a Quality Inspection directly or a Purchase Receipt
-    is_qi = frappe.db.exists("Quality Inspection", reference_name)
     is_pr = frappe.db.exists("Purchase Receipt", reference_name)
+    is_qi = frappe.db.exists("Quality Inspection", reference_name)
     
     inspections = []
-    if is_qi:
+    if is_pr:
+        # Fetch ALL quality inspections linked to this PR
+        inspections = frappe.get_all("Quality Inspection", 
+            filters={"reference_name": reference_name, "docstatus": ["<", 2], "inspection_type": ["in", ["Incoming", "PDI"]]},
+            fields=["*"],
+            order_by="creation asc"
+        )
+    elif is_qi:
         qi = frappe.get_doc("Quality Inspection", reference_name)
         inspections = [qi]
-    elif is_pr:
-        inspections = frappe.get_all("Quality Inspection", 
-            filters={"reference_name": reference_name, "docstatus": 1, "inspection_type": ["in", ["Incoming", "PDI"]]},
-            fields=["*"]
-        )
     
     if not inspections:
         # Final fallback: search for ANY QI with this reference
@@ -41,16 +79,37 @@ def get_report_data(reference_name=None, quality_inspection_template=None):
     return report_data
 
 def build_sheet_data(qi, custom_template=None):
-    item_code = qi.item_code
-    item = frappe.get_doc("Item", item_code)
+    item_code = qi.get("item_code") or ""
+    item = None
+    if item_code:
+        item = frappe.get_doc("Item", item_code)
+    else:
+        item = frappe._dict({"item_name": "", "control_plan": "", "raw_material": ""})
     
-    # Template
-    template_name = custom_template or qi.quality_inspection_template or item.get("quality_inspection_template")
+    # Comprehensive Template Discovery
+    template_name = custom_template or qi.get("quality_inspection_template")
+    
+    if not template_name and item:
+        template_name = item.get("quality_inspection_template")
+        
+    if not template_name and item_code:
+        # Final attempt: look for a default template for this item and inspection type
+        template_name = frappe.db.get_value("Quality Inspection Template", 
+            {"inspection_type": ["in", ["Incoming", "PDI"]]}, "name")
+
     parameters = []
     if template_name:
         parameters = frappe.get_all("Item Quality Inspection Parameter",
             filters={"parent": template_name},
             fields=["*"],
+            order_by="idx"
+        )
+    
+    # If no parameters from template, try to get them from the Quality Inspection's own table if it exists
+    if not parameters and qi.get("name"):
+        parameters = frappe.get_all("Quality Inspection Item",
+            filters={"parent": qi.name},
+            fields=["*", "specification as specification", "acceptance_criteria as acceptance_criteria_value"],
             order_by="idx"
         )
 
@@ -61,37 +120,65 @@ def build_sheet_data(qi, custom_template=None):
     )
 
     # Header Data
-    vendor = qi.get("vendor_name") or qi.get("vendor") or ""
-    reference = qi.get("reference_name") or ""
+    vendor = qi.get("supplier_name") or qi.get("supplier") or qi.get("vendor_name") or qi.get("vendor") or ""
+    if not vendor:
+        # Try fetching from Purchase Receipt if linked
+        if qi.get("reference_type") == "Purchase Receipt":
+            vendor = frappe.db.get_value("Purchase Receipt", qi.reference_name, "supplier_name") or frappe.db.get_value("Purchase Receipt", qi.reference_name, "supplier")
+        elif qi.get("reference_type") == "Purchase Order":
+            vendor = frappe.db.get_value("Purchase Order", qi.reference_name, "supplier_name") or frappe.db.get_value("Purchase Order", qi.reference_name, "supplier")
+
     batch_no = qi.get("batch_no") or ""
-    qty = qi.get("sample_size") or ""
     sample_size = qi.get("sample_size") or ""
     
+    # Try to find lot quantity from reference
+    lot_qty = ""
+    if qi.get("reference_name") and qi.get("reference_type") == "Purchase Receipt":
+        lot_qty = frappe.db.get_value("Purchase Receipt Item", 
+            {"parent": qi.reference_name, "item_code": item_code}, "qty")
+    elif qi.get("reference_name") and qi.get("reference_type") == "Purchase Order":
+        lot_qty = frappe.db.get_value("Purchase Order Item", 
+            {"parent": qi.reference_name, "item_code": item_code}, "qty")
+    
+    # Prepare a clean serializable QI dict to avoid internal Frappe serialization issues
+    qi_clean = {
+        "name": qi.name,
+        "item_code": qi.item_code,
+        "item_name": item.item_name or "",
+        "status": qi.get("status") or "",
+        "docstatus": qi.get("docstatus") or 0,
+        "inspection_type": qi.get("inspection_type") or "",
+        "report_date": qi.get("report_date") or "",
+        "sample_size": qi.get("sample_size") or ""
+    }
+    # Add all readings as clean dicts
+    qi_clean["readings"] = [r if isinstance(r, dict) else r.as_dict() for r in qi.readings]
+
     return {
         "qi": {
             "name": qi.name,
             "item_code": qi.item_code,
-            "batch_no": batch_no,
+            "batch_no": qi.get("batch_no") or "",
             "vendor": vendor,
-            "reference": reference,
-            "sample_size": sample_size,
+            "reference": qi.get("reference_name") or "",
+            "sample_size": qi.get("sample_size") or "",
             "challan_no": qi.get("challan_no") or "",
             "challan_date": qi.get("challan_date") or "",
             "doc_no": "YPEW/QA-F-02",
             "rev_no": "00",
-            "rev_date": "01.02.2021"
+            "rev_date": "01.02.2021",
+            "status": qi.get("status") or "",
+            "rejection_reason": qi.get("rejection_reason") or ""
         },
         "item": {
-            "item_name": item.item_name,
-            "model": item.get("model") or item.get("custom_model") or "",
-            "raw_material": item.get("raw_material") or "",
-            "masterbatch": item.get("masterbatch") or "",
-            "control_plan": item.get("control_plan_reference") or "-F/YPEW/QA/CP/08"
+            "item_name": item.item_name or "",
+            "control_plan": item.get("control_plan") or "-F/YPEW/QA/CP/08",
+            "raw_material": item.get("raw_material") or ""
         },
         "template_name": template_name,
-        "parameters": parameters,
-        "inspections": [qi],
-        "today": nowdate(),
+        "parameters": [p if isinstance(p, dict) else p.as_dict() for p in parameters],
+        "inspections": [qi_clean],
+        "today": qi.get("report_date") or nowdate(),
         "vendor": vendor,
-        "qty": flt(qty)
+        "qty": flt(lot_qty) or ""
     }

@@ -35,12 +35,12 @@ after_migrate = [
      "mold_management.patches.v0_1.add_packing_details_tab_on_item.execute",
      "mold_management.patches.v0_1.add_part_specification_tab_on_item.execute",
      "mold_management.patches.v0_1.add_rework_and_checking_details.execute",
-     
+
      "mold_management.patches.v0_1.add_is_mold_item_field_on_item.execute",
      "mold_management.patches.v0_1.add_other_than_mould_or_moulding_item.execute",
      "mold_management.patches.v0_1.add_is_moulding_item_checkbox_on_item.execute",
      "mold_management.patches.v0_1.add_mould_in_workorder.execute"
-    
+
 ]
 
 
@@ -52,9 +52,9 @@ doctype_js = {
     "Mould Maintenance Order": ["public/js/create_material_request_and_purchase_order_from_maintenance_order.js","public/js/on_mould_maintenance_order_fetched_total_shot_current_maximum.js"],
     "Mould Maintenance": ["public/js/calculate_amount_in_require_part_table.js","public/js/supplier_mandatory_when_maintenance_team_outsource.js","public/js/on_mould_maintenance_fetched_total_shot_current_maximum.js"],
     "Work Order": ["public/js/on_work_order_allow_non_stock_item.js","public/js/work_order_routing_template.js", "public/js/daily_production_log_button.js"],
-    "Stock Entry": ["public/js/on_stock_entry_fetched_work_order_item.js", "public/js/stock_entry_non_tock_items_allow.js"]
+    "Stock Entry": ["public/js/on_stock_entry_fetched_work_order_item.js", "public/js/stock_entry_non_tock_items_allow.js"],
 "Work Order":"public/js/add_filter_for_mould_field_in_workorder.js"
-    
+
 }
 
 
@@ -62,7 +62,7 @@ scheduler_events = {
     "daily": [
         "mold_management.mold_management.doctype.mould_maintenance_order.mould_maintenance_order.update_mould_maintenance_order_status",
     ],
-    
+
 }
 
 doc_events = {
@@ -72,22 +72,21 @@ doc_events = {
     "Mould": {
         "on_update": "mold_management.api.if_current_usage_count_reach_90_trigger_notification.check_mould_usage"
     },
+
     # "Mould Maintenance": {
     #     "on_update": "mold_management.api.update_last_maintenence_date_and_next_maintenance_date.update_mould_dates_from_maintenance"
     # },
 
     "Stock Entry": {
-        "on_submit": 
-        ["mold_management.api.mould_record_generation_on_stock_entry.create_mould_on_stock_entry",
-          "mold_management.api.allow_non_stock_item_in_stock_entry.check_non_stock_items"
+        "on_submit": ["mold_management.api.mould_record_generation_on_stock_entry.create_mould_on_stock_entry",
+                      "mold_management.api.allow_non_stock_item_in_stock_entry.check_non_stock_items"
         ]
-        
-       
     },
+
     "Mould Maintenance Order": {
         "on_update": "mold_management.api.reset_current_shot_zero.reset_mould_usage_on_submit"
-    }
-    
+    },
+
     # "Stock Entry": {
     #     "on_submit": [
     #         "mold_management.api.mould_record_generation_on_stock_entry.create_mould_on_stock_entry",

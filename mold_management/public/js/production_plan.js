@@ -60,6 +60,12 @@ frappe.ui.form.on("Production Plan Item", {
 	bom_no: function (frm, cdt, cdn) {
 		fetch_bom_operations(frm, cdt, cdn);
 	},
+	workstation: function (frm, cdt, cdn) {
+		update_operations_from_row(frm, cdt, cdn, "workstation");
+	},
+	mould: function (frm, cdt, cdn) {
+		update_operations_from_row(frm, cdt, cdn, "mould");
+	},
 	form_render: function (frm, cdt, cdn) {
 		render_operations_html(frm, cdt, cdn);
 	},
@@ -69,10 +75,39 @@ frappe.ui.form.on("Production Plan Sub Assembly Item", {
 	bom_no: function (frm, cdt, cdn) {
 		fetch_bom_operations(frm, cdt, cdn);
 	},
+	workstation: function (frm, cdt, cdn) {
+		update_operations_from_row(frm, cdt, cdn, "workstation");
+	},
+	mould: function (frm, cdt, cdn) {
+		update_operations_from_row(frm, cdt, cdn, "mould");
+	},
 	form_render: function (frm, cdt, cdn) {
 		render_operations_html(frm, cdt, cdn);
 	},
 });
+
+function update_operations_from_row(frm, cdt, cdn, field) {
+	let row = frappe.get_doc(cdt, cdn);
+	let val = row[field];
+	if (!row.operations_data) return;
+
+	try {
+		let ops = JSON.parse(row.operations_data);
+		let changed = false;
+		ops.forEach((op) => {
+			if (op[field] !== val) {
+				op[field] = val;
+				changed = true;
+			}
+		});
+		if (changed) {
+			frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
+			render_operations_html(frm, cdt, cdn, true);
+		}
+	} catch (e) {
+		// ignore
+	}
+}
 
 function show_operations_popup(frm, cdt, cdn) {
 	let row = frappe.get_doc(cdt, cdn);
@@ -106,6 +141,10 @@ function show_operations_popup(frm, cdt, cdn) {
 				return;
 			}
 			frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
+			if (ops.length > 0 && cdt === "Production Plan Item") {
+				frappe.model.set_value(cdt, cdn, "workstation", ops[0].workstation);
+				frappe.model.set_value(cdt, cdn, "mould", ops[0].mould);
+			}
 			render_operations_html(frm, cdt, cdn, true);
 			d.hide();
 		},
@@ -259,6 +298,10 @@ function fetch_bom_operations_for_popup(frm, cdt, cdn, d) {
 				}));
 				render_ops_in_dialog(ops, d, frm, cdt, cdn);
 				frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
+				if (ops.length > 0 && cdt === "Production Plan Item") {
+					frappe.model.set_value(cdt, cdn, "workstation", ops[0].workstation);
+					frappe.model.set_value(cdt, cdn, "mould", ops[0].mould);
+				}
 				render_operations_html(frm, cdt, cdn, true);
 			}
 		},
@@ -290,6 +333,10 @@ function fetch_bom_operations(frm, cdt, cdn, force_render = false) {
 					quality_inspection_template: op.quality_inspection_template || null
 				}));
 				frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
+				if (ops.length > 0 && cdt === "Production Plan Item") {
+					frappe.model.set_value(cdt, cdn, "workstation", ops[0].workstation);
+					frappe.model.set_value(cdt, cdn, "mould", ops[0].mould);
+				}
 				if (force_render) {
 					render_operations_html(frm, cdt, cdn, true);
 				}
@@ -399,6 +446,9 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 					if (frm.doc.docstatus === 1) return;
 					ops[idx].workstation = this.get_value();
 					frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
+					if (idx === 0 && cdt === "Production Plan Item") {
+						frappe.model.set_value(cdt, cdn, "workstation", this.get_value());
+					}
 					update_warning();
 				},
 			},
@@ -430,6 +480,9 @@ function render_operations_html(frm, cdt, cdn, skip_auto_fetch = false) {
 					if (frm.doc.docstatus === 1) return;
 					ops[idx].mould = this.get_value();
 					frappe.model.set_value(cdt, cdn, "operations_data", JSON.stringify(ops));
+					if (idx === 0 && cdt === "Production Plan Item") {
+						frappe.model.set_value(cdt, cdn, "mould", this.get_value());
+					}
 					update_warning();
 				},
 			},

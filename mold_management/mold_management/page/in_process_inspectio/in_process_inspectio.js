@@ -110,7 +110,14 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 					margin: 0; 
 					width: 100%;
 					max-width: none; 
+					height: 98vh !important; /* Stretch to fill print page */
+					display: flex;
+					flex-direction: column;
+					justify-content: space-between;
 				}
+				.inspection-sheet-wrapper > table:nth-of-type(1) { flex: 0 0 auto; }
+				.inspection-sheet-wrapper > table:nth-of-type(2) { flex: 1 1 auto; height: 100%; }
+				.inspection-sheet-wrapper > div { flex: 0 0 auto; }
 				
 				.page-break { page-break-after: always; }
 				

@@ -121,16 +121,20 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 				}
 				.inspection-sheet th, .inspection-sheet td { 
 					border: 1px solid #000 !important; 
-					padding: 3px !important; 
-					font-size: 9px !important;
-					line-height: 1.1 !important;
+					padding: 1px 2px !important; 
+					font-size: 7.5px !important;
+					line-height: 1 !important;
 				}
-				.header-label { font-size: 9px !important; padding: 3px !important; background-color: #f0f0f0 !important; }
-				.header-value { font-size: 10px !important; padding: 3px !important; }
-				.logo-text { font-size: 18px !important; font-weight: 800 !important; letter-spacing: 2px !important; }
-				.sheet-title { font-size: 16px !important; margin-bottom: 2px !important; }
-				.section-header { font-size: 10px !important; padding: 4px 6px !important; }
-				.logo-cell { padding: 5px !important; }
+				.header-label { font-size: 7.5px !important; padding: 1px 2px !important; background-color: #f0f0f0 !important; }
+				.header-value { font-size: 8px !important; padding: 1px 2px !important; }
+				.logo-text { font-size: 14px !important; font-weight: 800 !important; letter-spacing: 1px !important; margin: 0 !important; }
+				.sheet-title { font-size: 12px !important; margin-bottom: 0 !important; }
+				.section-header { font-size: 8px !important; padding: 1px 2px !important; }
+				.logo-cell { padding: 2px !important; }
+				
+				/* Compress footer margins */
+				.print-footer-note { margin-top: 4px !important; font-size: 7px !important; line-height: 1.1 !important; }
+				.print-signature-row { margin-top: 15px !important; }
 			}
 			
 			.hidden-for-print { display: none !important; }
@@ -371,12 +375,12 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 					</tbody>
 				</table>
 
-				<div style="margin-top: 10px; font-size: 9px; line-height: 1.5; font-weight: bold;">
+				<div class="print-footer-note" style="margin-top: 10px; font-size: 9px; line-height: 1.5; font-weight: bold;">
 					Note 1 : In - process frequency is once in a 2 hrs. <br>
 					2 : If any visual defects found, it should be written in observation coloumns.
 				</div>
 
-				<div class="row" style="margin-top: 30px;">
+				<div class="row print-signature-row" style="margin-top: 30px;">
 					<div class="col-6">
 						<div style="border-top: 1px solid #000; display: inline-block; min-width: 150px; text-align: center; font-size: 10px; font-weight: bold;">Inspector(QA ENGG)</div>
 					</div>

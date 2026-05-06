@@ -118,6 +118,8 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 		</style>
 	`).appendTo(page.body);
 
+	let template_field;
+
 	const field = frappe.ui.form.make_control({
 		parent: $(wrapper).find("#reference_filter"),
 		df: {
@@ -126,12 +128,30 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 			fieldtype: "Link",
 			options: "Job Card",
 			default: reference_name,
-			onchange: () => load_report_data(),
+			onchange: () => {
+				const ref = field && typeof field.get_value === "function" ? field.get_value() : "";
+				if (ref) {
+					frappe.db.get_value("Job Card", ref, "quality_inspection_template")
+						.then((r) => {
+							if (r && r.message && r.message.quality_inspection_template) {
+								if (template_field && typeof template_field.get_value === "function") {
+									if (template_field.get_value() !== r.message.quality_inspection_template) {
+										template_field.set_value(r.message.quality_inspection_template);
+										return;
+									}
+								}
+							}
+							load_report_data();
+						});
+				} else {
+					load_report_data();
+				}
+			},
 		},
 		render_input: true,
 	});
 
-	const template_field = frappe.ui.form.make_control({
+	template_field = frappe.ui.form.make_control({
 		parent: $(wrapper).find("#template_filter"),
 		df: {
 			label: "Quality Inspection Template",

@@ -88,8 +88,21 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 					size: A4 landscape; 
 					margin: 5mm; 
 				}
-				.no-print { display: none !important; }
-				.report-container { padding: 0; background: #fff; height: auto !important; min-height: 0 !important; }
+
+				body.custom-report-print { 
+					background: #fff !important; 
+					margin: 0 !important; 
+					padding: 0 !important; 
+				}
+				
+				body.custom-report-print #report-container { 
+					width: 100% !important; 
+					max-width: 100% !important; 
+					margin: 0 !important; 
+					padding: 0 !important; 
+					background: #fff !important; 
+				}
+
 				.inspection-sheet-wrapper { 
 					padding: 0; 
 					border: none; 
@@ -97,26 +110,45 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 					margin: 0; 
 					width: 100%;
 					max-width: none; 
-					transform: scale(1.0); /* Adjust if needed */
-					transform-origin: top left;
+					height: 98vh !important; /* Stretch to fill print page */
+					display: flex;
+					flex-direction: column;
+					justify-content: space-between;
 				}
-				body { background: #fff !important; margin: 0; padding: 0; }
+				.inspection-sheet-wrapper > table:nth-of-type(1) { flex: 0 0 auto; }
+				.inspection-sheet-wrapper > table:nth-of-type(2) { flex: 1 1 auto; height: 100%; }
+				.inspection-sheet-wrapper > div { flex: 0 0 auto; }
+				
 				.page-break { page-break-after: always; }
+				
+				.inspection-sheet {
+					width: 100% !important;
+					table-layout: fixed; /* helps with fitting */
+					word-wrap: break-word;
+				}
 				.inspection-sheet th, .inspection-sheet td { 
 					border: 1px solid #000 !important; 
-					padding: 2px 4px !important; /* Extremely compact */
-					font-size: 8px !important;
-					line-height: 1.1 !important;
+					padding: 1px 2px !important; 
+					font-size: 7.5px !important;
+					line-height: 1 !important;
 				}
-				.header-label { font-size: 8.5px !important; padding: 2px 4px !important; background-color: #f0f0f0 !important; }
-				.header-value { font-size: 9px !important; padding: 2px 4px !important; }
-				.logo-text { font-size: 16px !important; font-weight: 800 !important; }
-				.sheet-title { font-size: 14px !important; }
-				.section-header { font-size: 9px !important; padding: 3px 6px !important; }
+				.header-label { font-size: 7.5px !important; padding: 1px 2px !important; background-color: #f0f0f0 !important; }
+				.header-value { font-size: 8px !important; padding: 1px 2px !important; }
+				.logo-text { font-size: 14px !important; font-weight: 800 !important; letter-spacing: 1px !important; margin: 0 !important; }
+				.sheet-title { font-size: 12px !important; margin-bottom: 0 !important; }
+				.section-header { font-size: 8px !important; padding: 1px 2px !important; }
 				.logo-cell { padding: 2px !important; }
+				
+				/* Compress footer margins */
+				.print-footer-note { margin-top: 4px !important; font-size: 7px !important; line-height: 1.1 !important; }
+				.print-signature-row { margin-top: 15px !important; }
 			}
+			
+			.hidden-for-print { display: none !important; }
 		</style>
 	`).appendTo(page.body);
+
+	let template_field;
 
 	const field = frappe.ui.form.make_control({
 		parent: $(wrapper).find("#reference_filter"),
@@ -126,12 +158,30 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 			fieldtype: "Link",
 			options: "Job Card",
 			default: reference_name,
-			onchange: () => load_report_data(),
+			onchange: () => {
+				const ref = field && typeof field.get_value === "function" ? field.get_value() : "";
+				if (ref) {
+					frappe.db.get_value("Job Card", ref, "quality_inspection_template")
+						.then((r) => {
+							if (r && r.message && r.message.quality_inspection_template) {
+								if (template_field && typeof template_field.get_value === "function") {
+									if (template_field.get_value() !== r.message.quality_inspection_template) {
+										template_field.set_value(r.message.quality_inspection_template);
+										return;
+									}
+								}
+							}
+							load_report_data();
+						});
+				} else {
+					load_report_data();
+				}
+			},
 		},
 		render_input: true,
 	});
 
-	const template_field = frappe.ui.form.make_control({
+	template_field = frappe.ui.form.make_control({
 		parent: $(wrapper).find("#template_filter"),
 		df: {
 			label: "Quality Inspection Template",
@@ -156,7 +206,29 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 		.on("click", () => load_report_data());
 	$(wrapper)
 		.find("#btn-print")
-		.on("click", () => window.print());
+		.on("click", () => {
+			const $report = $(wrapper).find("#report-container");
+			const $placeholder = $('<div id="report-placeholder"></div>').insertAfter($report);
+			
+			// Move report to body
+			$report.appendTo('body');
+			
+			// Hide everything else in body
+			$('body > *').not($report).addClass('hidden-for-print');
+			
+			// Add a class to body for specific print styles
+			$('body').addClass('custom-report-print');
+			
+			window.print();
+			
+			// Restore after print dialog closes
+			setTimeout(() => {
+				$('body > *').removeClass('hidden-for-print');
+				$('body').removeClass('custom-report-print');
+				$report.insertBefore($placeholder);
+				$placeholder.remove();
+			}, 500);
+		});
 
 	load_report_data();
 
@@ -310,12 +382,12 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 					</tbody>
 				</table>
 
-				<div style="margin-top: 10px; font-size: 9px; line-height: 1.5; font-weight: bold;">
+				<div class="print-footer-note" style="margin-top: 10px; font-size: 9px; line-height: 1.5; font-weight: bold;">
 					Note 1 : In - process frequency is once in a 2 hrs. <br>
 					2 : If any visual defects found, it should be written in observation coloumns.
 				</div>
 
-				<div class="row" style="margin-top: 30px;">
+				<div class="row print-signature-row" style="margin-top: 30px;">
 					<div class="col-6">
 						<div style="border-top: 1px solid #000; display: inline-block; min-width: 150px; text-align: center; font-size: 10px; font-weight: bold;">Inspector(QA ENGG)</div>
 					</div>
@@ -452,7 +524,7 @@ frappe.pages["in-process-inspectio"].on_page_load = function (wrapper) {
 				}
 			}
 
-			cells += `<td class="text-center ${style}" style="min-width: 60px;">${val}</td>`;
+			cells += `<td class="text-center ${style}">${val}</td>`;
 		}
 
 		return `

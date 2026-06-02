@@ -124,7 +124,7 @@ frappe.ui.form.on("Item", {
 			"clipping",
 		];
 
-		const mould_item_fields = [
+		const mould_item_visible_fields = [
 			"shape",
 			"material_type",
 			"no_of_cavity",
@@ -137,11 +137,24 @@ frappe.ui.form.on("Item", {
 			"total_lifecycle_shot",
 			"mould_name",
 			"mould_ty",
-			"mould",
-			"cavity",
 		];
 
-		const all_monitored_fields = [...moulding_fields, ...mould_item_fields];
+		const mould_item_required_fields = [
+			"shape",
+			"material_type",
+			"no_of_cavity",
+			"side_cores",
+			"side_cores_qty",
+			"hot_runner_system",
+			"cold_runner_system",
+			"tool_life",
+			"total_shots",
+			"total_lifecycle_shot",
+			"mould_name",
+			"mould_ty",
+		];
+
+		const all_monitored_fields = [...moulding_fields, ...mould_item_visible_fields, "mould", "cavity"];
 
 		// Reset visibility and mandatory status
 		tabs.forEach((tab) => frm.set_df_property(tab, "hidden", 1));
@@ -164,8 +177,11 @@ frappe.ui.form.on("Item", {
 			// Show mould details section
 			frm.set_df_property("mould_details_section", "hidden", 0);
 			// Show mould item fields
-			mould_item_fields.forEach((field) => {
+			mould_item_visible_fields.forEach((field) => {
 				frm.set_df_property(field, "hidden", 0);
+			});
+			// Make specific mould item fields mandatory
+			mould_item_required_fields.forEach((field) => {
 				frm.set_df_property(field, "reqd", 1);
 			});
 		} else if (frm.doc.other_than_mould_or_moulding) {

@@ -47,7 +47,7 @@ class CustomStockEntry(StockEntry):
         # 🔓 Custom submit logic
         self.update_stock_ledger()
  
-    def make_sl_entries(self, sl_entries, allow_negative_stock=False):
+    def make_sl_entries(self, sl_entries, *args, **kwargs):
         """
         - Create SLE only for stock items
         """
@@ -62,7 +62,8 @@ class CustomStockEntry(StockEntry):
  
         super().make_sl_entries(
             filtered,
-            allow_negative_stock=allow_negative_stock
+            *args,
+            **kwargs
         )
  
  

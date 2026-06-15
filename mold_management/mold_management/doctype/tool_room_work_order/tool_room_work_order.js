@@ -420,7 +420,7 @@ frappe.ui.form.on("Tool Room Work Order", {
 				frm.doc.produced_qty -
 				frm.doc.process_loss_qty;
 			if (pending_complete) {
-				
+
 				var width = (pending_complete / frm.doc.qty) * 100 - added_min;
 				title = __("{0} items in progress", [pending_complete]);
 				bars.push({
@@ -787,6 +787,7 @@ erpnext.work_order = {
 	},
 
 	set_default_warehouse: function (frm) {
+		if (!frm.doc.company) return;
 		if (!(frm.doc.wip_warehouse || frm.doc.fg_warehouse)) {
 			frappe.call({
 				method: "mold_management.mold_management.doctype.tool_room_work_order.tool_room_work_order.get_default_warehouse",

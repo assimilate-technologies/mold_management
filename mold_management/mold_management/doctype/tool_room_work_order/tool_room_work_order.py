@@ -1499,13 +1499,22 @@ def make_stock_entry(work_order_id, purpose, qty=None, target_warehouse=None):
 
 
 @frappe.whitelist()
-def get_default_warehouse():
-	doc = frappe.get_cached_doc("Manufacturing Settings")
+def get_default_warehouse(company=None):
+	if company:
+		company_doc = frappe.get_doc("Company", company)
+		default_wip = company_doc.default_wip_warehouse
+		default_fg = company_doc.default_fg_warehouse
+		default_scrap = company_doc.default_scrap_warehouse
+	else:
+		settings = frappe.get_cached_doc("Manufacturing Settings")
+		default_wip = settings.default_wip_warehouse
+		default_fg = settings.default_fg_warehouse
+		default_scrap = settings.default_scrap_warehouse
 
 	return {
-		"wip_warehouse": doc.default_wip_warehouse,
-		"fg_warehouse": doc.default_fg_warehouse,
-		"scrap_warehouse": doc.default_scrap_warehouse,
+		"wip_warehouse": default_wip,
+		"fg_warehouse": default_fg,
+		"scrap_warehouse": default_scrap,
 	}
 
 

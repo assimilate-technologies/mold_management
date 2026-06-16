@@ -1,7 +1,7 @@
 {
  "app": "mold_management",
  "charts": [],
- "content": "[{\"id\":\"NVV-IvR9SL\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Mold Management</span>\",\"col\":12}},{\"id\":\"hIBEm5YQIB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Mould Availability Dashboard\",\"col\":3}},{\"id\":\"-CDTAzTYmw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Predictive Dashboard\",\"col\":3}},{\"id\":\"4YaHp3aIEv\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"In Process Inspection Report\",\"col\":3}},{\"id\":\"XeJ2MRlpKd\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"iSL4C3LNsx\",\"type\":\"card\",\"data\":{\"card_name\":\"Masters\",\"col\":4}},{\"id\":\"d_SUekQ51m\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"YIBJ97-3gy\",\"type\":\"card\",\"data\":{\"card_name\":\"Other\",\"col\":4}}]",
+ "content": "[{\"id\":\"NVV-IvR9SL\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Mold Management</span>\",\"col\":12}},{\"id\":\"hIBEm5YQIB\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Mould Availability Dashboard\",\"col\":3}},{\"id\":\"-CDTAzTYmw\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Predictive Dashboard\",\"col\":3}},{\"id\":\"XeJ2MRlpKd\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"iSL4C3LNsx\",\"type\":\"card\",\"data\":{\"card_name\":\"Masters\",\"col\":4}},{\"id\":\"d_SUekQ51m\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"YIBJ97-3gy\",\"type\":\"card\",\"data\":{\"card_name\":\"Other\",\"col\":4}}]",
  "creation": "2025-06-08 17:51:04.348546",
  "custom_blocks": [],
  "docstatus": 0,
@@ -212,7 +212,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-03-05 10:27:16.067034",
+ "modified": "2026-06-11 15:07:51.229347",
  "modified_by": "Administrator",
  "module": "Mold Management",
  "name": "Mold Management",
@@ -231,14 +231,6 @@
  ],
  "sequence_id": 36.0,
  "shortcuts": [
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "In Process Inspection Report",
-   "link_to": "in-process-inspectio",
-   "type": "Page",
-   "url": "/i-production-report"
-  },
   {
    "color": "Grey",
    "doc_view": "List",

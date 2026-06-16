@@ -97,7 +97,7 @@ frappe.ui.form.on("Item", {
 			"mould_details_section",
 			"mould_selection_table",
 			"cycle_time",
-
+			"cavity",
 			"gluing",
 			"drilling",
 			"def_1_hrs",
@@ -137,8 +137,7 @@ frappe.ui.form.on("Item", {
 			"total_lifecycle_shot",
 			"mould_name",
 			"mould_ty",
-			"mould",
-			"cavity",
+			"mould"
 		];
 
 		const all_monitored_fields = [...moulding_fields, ...mould_item_fields];

@@ -42,8 +42,7 @@ def execute():
             "fieldname": "cavity",
             "label": "Cavity",
             "fieldtype": "Int",
-            
-            "insert_after": "part_specification_section"
+            "insert_before": "pcs_wt"
         },
         {
             "fieldname": "pcs_wt",

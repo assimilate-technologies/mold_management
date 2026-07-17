@@ -272,7 +272,7 @@ def create_mould(wo, doc):
 def create_asset_from_work_order(wo):
     asset = frappe.get_doc({
         "doctype": "Asset",
-        "asset_name": wo.production_item,
+        "asset_name": wo.mould_name,
         "item_code": wo.production_item,
         "location": "Pune",
 

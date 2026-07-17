@@ -36,7 +36,7 @@ class CustomStockEntry(StockEntry):
 
     def make_sl_entries(self, sl_entries, allow_negative_stock=False, via_landed_cost_voucher=False, *args, **kwargs):
         """
-        - Create SLE only for stock items
+        - Create SLE only for stock items with non-zero quantity (or Stock Reconciliation)
         """
         filtered = []
 
@@ -44,7 +44,7 @@ class CustomStockEntry(StockEntry):
             is_stock = frappe.get_cached_value(
                 "Item", sle.get("item_code"), "is_stock_item"
             )
-            if is_stock:
+            if is_stock and (sle.get("actual_qty") or sle.get("voucher_type") == "Stock Reconciliation"):
                 filtered.append(sle)
 
         super().make_sl_entries(

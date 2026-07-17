@@ -111,13 +111,14 @@ frappe.ui.form.on("Item", {
 			"req_boxsizes",
 			"poly_bag_section",
 			"standard_pkg_of_polybag",
-			"pcs_wt",
+			"cavity",
+            "pcs_wt",
 			"bending",
 			"shift_prod",
 			"std_pkg_box",
 			"other_operations",
 			"part_specification_section",
-			"cavity", // moved after Part Specification Section
+			/* cavity line repositioned */
 			"box_packing_section",
 			"req_poly_bags_sizes",
 			"density",

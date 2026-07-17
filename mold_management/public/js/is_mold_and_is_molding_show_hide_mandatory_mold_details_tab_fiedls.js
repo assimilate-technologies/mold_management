@@ -97,7 +97,7 @@ frappe.ui.form.on("Item", {
 			"mould_details_section",
 			"mould_selection_table",
 			"cycle_time",
-
+			"cavity",
 			"gluing",
 			"drilling",
 			"def_1_hrs",

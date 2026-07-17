@@ -97,7 +97,6 @@ frappe.ui.form.on("Item", {
 			"mould_details_section",
 			"mould_selection_table",
 			"cycle_time",
-			"cavity",
 			"gluing",
 			"drilling",
 			"def_1_hrs",
@@ -118,6 +117,7 @@ frappe.ui.form.on("Item", {
 			"std_pkg_box",
 			"other_operations",
 			"part_specification_section",
+			"cavity", // moved after Part Specification Section
 			"box_packing_section",
 			"req_poly_bags_sizes",
 			"density",
@@ -169,6 +169,9 @@ frappe.ui.form.on("Item", {
 			tabs.forEach((tab) => frm.set_df_property(tab, "hidden", 0));
 			// Show moulding fields
 			moulding_fields.forEach((field) => frm.set_df_property(field, "hidden", 0));
+            // Ensure cavity field is visible (explicitly set in case of naming issues)
+            frm.set_df_property("cavity", "hidden", 0);
+            frm.refresh_field("cavity");
 			// Mandatory table
 			frm.set_df_property("mould_selection_table", "reqd", 1);
 		} else if (frm.doc.is_mould_item) {

@@ -1,0 +1,5 @@
+Patch summary:
+- Added `is_moulding_machine` (Check) to Workstation Type after hour_rate.
+- Added `belongs_to` (Select: Mould, Moulding) to Workstation after disabled.
+- Added `belongs_to` (Select: Mould, Moulding) to Tool Room Work Order Operation after workstation.
+All patches are executed via after_migrate hook.

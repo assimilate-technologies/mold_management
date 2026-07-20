@@ -26,6 +26,9 @@ after_migrate = [
      "mold_management.patches.v0_1.create_tool_room_work_order_on_material_request.execute",
      "mold_management.patches.v0_1.create_is_customer_and_maintain_stock_fixed_asset_on_work_order.execute",
      "mold_management.patches.v0_1.add_work_order_routing_field_on_work_order.execute",
+    "mold_management.patches.v0_1.add_is_moulding_machine_field_on_workstation_type.execute",
+    "mold_management.patches.v0_1.add_belongs_to_field_on_workstation.execute",
+    "mold_management.patches.v0_1.add_belongs_to_field_on_operations.execute",
 
      # fields and section on item doctype
      "mold_management.patches.v0_1.add_mould_detail_tab_on_item_master.execute",

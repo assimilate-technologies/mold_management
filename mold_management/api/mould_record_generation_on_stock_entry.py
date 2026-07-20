@@ -285,7 +285,7 @@ def create_asset_from_work_order(wo):
 
         # Optional
         "purchase_receipt": None,
-        "is_existing_asset": 1,
+        "is_existing_asset": 0,
         "maintenance_required": 1
         
     })

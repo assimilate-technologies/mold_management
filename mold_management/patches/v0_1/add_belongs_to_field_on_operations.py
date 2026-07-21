@@ -1,12 +1,12 @@
 import frappe
 
 def execute():
-    """Add custom field `belongs_to` to Tool Room Work Order Operation doctype"""
-    if frappe.db.exists("Custom Field", {"dt": "Tool Room Work Order Operation", "fieldname": "belongs_to"}):
+    """Add custom field `belongs_to` to Operation doctype"""
+    if frappe.db.exists("Custom Field", {"dt": "Operation", "fieldname": "belongs_to"}):
         return
     frappe.get_doc({
         "doctype": "Custom Field",
-        "dt": "Tool Room Work Order Operation",
+        "dt": "Operation",
         "fieldname": "belongs_to",
         "label": "Belongs To",
         "fieldtype": "Select",

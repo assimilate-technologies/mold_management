@@ -15,11 +15,11 @@ def execute():
         frappe.db.set_value("Custom Field", "Item-mould_details_tab", "insert_after", "total_projected_qty")
 
     # Step 2: Create Section Break inside Mould Details tab
-    if not frappe.db.exists("Custom Field", {"dt": "Item", "fieldname": "Mould_details_section"}):
+    if not frappe.db.exists("Custom Field", {"dt": "Item", "fieldname": "mould_details_section"}):
         frappe.get_doc({
             "doctype": "Custom Field",
             "dt": "Item",
-            "fieldname": "Mould_details_section",
+            "fieldname": "mould_details_section",
             "label": "Mould Details Section",
             "fieldtype": "Section Break",
             "insert_after": "mould_details_tab"
@@ -121,7 +121,7 @@ def execute():
         # "label": "Mould",
         # "fieldtype": "",
         # "options": "Mould Selection",
-        # "insert_after": "Mould_details_section"
+        # "insert_after": "mould_details_section"
         # },
         # {
         # "fieldname": "mould_type",

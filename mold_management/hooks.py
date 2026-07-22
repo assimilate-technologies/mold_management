@@ -42,7 +42,8 @@ after_migrate = [
      "mold_management.patches.v0_1.add_is_mold_item_field_on_item.execute",
      "mold_management.patches.v0_1.add_other_than_mould_or_moulding_item.execute",
      "mold_management.patches.v0_1.add_is_moulding_item_checkbox_on_item.execute",
-     "mold_management.patches.v0_1.add_mould_in_workorder.execute"
+     "mold_management.patches.v0_1.add_mould_in_workorder.execute",
+     "mold_management.patches.v0_1.make_work_order_bom_no_non_mandatory.execute"
 
 ]
 

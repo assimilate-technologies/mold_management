@@ -96,6 +96,7 @@ frappe.ui.form.on("Item", {
 		const moulding_fields = [
 			"mould_details_section",
 			"mould_selection_table",
+			"mould",
 			"cycle_time",
 			"gluing",
 			"drilling",
@@ -112,7 +113,7 @@ frappe.ui.form.on("Item", {
 			"poly_bag_section",
 			"standard_pkg_of_polybag",
 			"cavity",
-            "pcs_wt",
+			"pcs_wt",
 			"bending",
 			"shift_prod",
 			"std_pkg_box",
@@ -120,7 +121,6 @@ frappe.ui.form.on("Item", {
 			"part_specification_section",
 			"box_packing_section",
 			"req_poly_bags_sizes",
-			"density",
 			"clipping",
 		];
 
@@ -164,7 +164,7 @@ frappe.ui.form.on("Item", {
 			"mould_ty",
 		];
 
-		const all_monitored_fields = [...moulding_fields, ...mould_item_visible_fields, "mould", "cavity"];
+		const all_monitored_fields = [...moulding_fields, ...mould_item_visible_fields];
 
 		// Reset visibility and mandatory status for all monitored fields
 		tabs.forEach((tab) => frm.set_df_property(tab, "hidden", 1));

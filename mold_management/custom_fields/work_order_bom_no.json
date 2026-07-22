@@ -1,0 +1,14 @@
+{
+ "custom_fields": [
+  {
+   "dt": "Work Order",
+   "fieldname": "bom_no",
+   "fieldtype": "Link",
+   "label": "BOM No",
+   "options": "BOM",
+   "reqd": 0,
+   "mandatory_depends_on": "eval:!doc.production_item || !frappe.db.get_value('Item', doc.production_item, 'is_mould_item')",
+   "insert_after": "production_item"
+  }
+ ]
+}

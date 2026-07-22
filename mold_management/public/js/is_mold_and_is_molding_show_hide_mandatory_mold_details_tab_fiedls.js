@@ -118,11 +118,20 @@ frappe.ui.form.on("Item", {
 			"std_pkg_box",
 			"other_operations",
 			"part_specification_section",
-			/* cavity line repositioned */
 			"box_packing_section",
 			"req_poly_bags_sizes",
 			"density",
 			"clipping",
+		];
+
+		const moulding_required_fields = [
+			"mould_selection_table",
+			"cycle_time",
+			"cavity",
+			"pcs_wt",
+			"runner_wt",
+			"shot_wt",
+			"gross_wt",
 		];
 
 		const mould_item_visible_fields = [
@@ -157,64 +166,38 @@ frappe.ui.form.on("Item", {
 
 		const all_monitored_fields = [...moulding_fields, ...mould_item_visible_fields, "mould", "cavity"];
 
-		// Reset visibility and mandatory status
+		// Reset visibility and mandatory status for all monitored fields
 		tabs.forEach((tab) => frm.set_df_property(tab, "hidden", 1));
 		all_monitored_fields.forEach((field) => {
 			frm.set_df_property(field, "hidden", 1);
 			frm.set_df_property(field, "reqd", 0);
 		});
-		frm.set_df_property("mould_selection_table", "reqd", 0);
 
 		if (frm.doc.is_moulding) {
 			// Show all tabs
 			tabs.forEach((tab) => frm.set_df_property(tab, "hidden", 0));
 			// Show moulding fields
 			moulding_fields.forEach((field) => frm.set_df_property(field, "hidden", 0));
-            // Ensure cavity field is visible (explicitly set in case of naming issues)
-            frm.set_df_property("cavity", "hidden", 0);
-            frm.refresh_field("cavity");
-			// Mandatory table
-			frm.set_df_property("mould_selection_table", "reqd", 1);
+			frm.set_df_property("cavity", "hidden", 0);
+			frm.refresh_field("cavity");
+			// Make moulding-related fields mandatory
+			moulding_required_fields.forEach((field) => {
+				frm.set_df_property(field, "reqd", 1);
+			});
 		} else if (frm.doc.is_mould_item) {
 			// Show only mould details tab
 			frm.set_df_property("mould_details_tab", "hidden", 0);
-			// Show mould details section
 			frm.set_df_property("mould_details_section", "hidden", 0);
 			// Show mould item fields
 			mould_item_visible_fields.forEach((field) => {
 				frm.set_df_property(field, "hidden", 0);
 			});
-			// Make specific mould item fields mandatory
+			// Make mould item fields mandatory
 			mould_item_required_fields.forEach((field) => {
 				frm.set_df_property(field, "reqd", 1);
 			});
 		} else if (frm.doc.other_than_mould_or_moulding) {
-			// All tabs and fields remain hidden (already reset above)
-		} else {
-			// None checked - default behavior?
-			// The request says "if it is other_than_mould_or_moulding is checked then i want to hide all those fields and tabs"
-			// And "if is_moulding checked then fields show tabs=..."
-			// If none are checked, we should probably follow the "other_than..." or reset logic.
-			// Let's assume hiding is the default if none are checked as well, or show if user wants?
-			// Previous code reset everything to visible if both unchecked.
-			// But with the new requirement, it seems we only want to show things when specific checkboxes are checked.
-			// To be safe, let's keep them hidden if none checked, or maybe visible if that's standard?
-			// Actually, usually in Frappe, you want to see standard fields if it's a "normal" item.
-			// But these are "Custom" fields.
-			// If both were unchecked previously, it reset them to hidden=0 (visible).
-			/*
-            else {
-                // If both unchecked → reset everything (optional)
-                frm.set_df_property('mould_selection_table', 'hidden', 0);
-                frm.set_df_property('mould_selection_table', 'reqd', 0);
-
-                other_fields.forEach(field => {
-                    frm.set_df_property(field, 'hidden', 0);
-                    frm.set_df_property(field, 'reqd', 0);
-                });
-            }
-            */
-			// I'll stick to making them hidden/reset if none checked for now as per the "hide these if other" logic implies exclusivity.
+			// All tabs and fields remain hidden and unmandatory (already reset above)
 		}
 
 		frm.refresh_fields();

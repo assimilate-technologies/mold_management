@@ -55,9 +55,8 @@ doctype_js = {
     "Job Card": ["public/js/mould_filter_applied_on_job_card.js","public/js/on_job_card_is_mold_checkbox_checked_then_mandatory_mould_field.js", "public/js/daily_production_log_button.js"],
     "Mould Maintenance Order": ["public/js/create_material_request_and_purchase_order_from_maintenance_order.js","public/js/on_mould_maintenance_order_fetched_total_shot_current_maximum.js"],
     "Mould Maintenance": ["public/js/calculate_amount_in_require_part_table.js","public/js/supplier_mandatory_when_maintenance_team_outsource.js","public/js/on_mould_maintenance_fetched_total_shot_current_maximum.js"],
-    "Work Order": ["public/js/on_work_order_allow_non_stock_item.js","public/js/work_order_routing_template.js", "public/js/daily_production_log_button.js"],
+    "Work Order": ["public/js/on_work_order_allow_non_stock_item.js","public/js/work_order_routing_template.js", "public/js/daily_production_log_button.js", "public/js/add_filter_for_mould_field_in_workorder.js"],
     "Stock Entry": ["public/js/on_stock_entry_fetched_work_order_item.js", "public/js/stock_entry_non_tock_items_allow.js"],
-"Work Order":"public/js/add_filter_for_mould_field_in_workorder.js"
 
 }
 

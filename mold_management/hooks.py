@@ -50,7 +50,7 @@ after_migrate = [
 
 doctype_js = {
     "Mould":["public/js/fetcehd_id_in_mould_code_field.js","public/js/add_manage_button_on_mould.js"],
-    "Item": ["public/js/fetched_cavity_from_mould_on_item.js","public/js/if_fixed_asset_hide_customer_provided_item_checkbox.js","public/js/atleast one of the mould checkbox is checked.js","public/js/is_mold_and_is_molding_show_hide_mandatory_mold_details_tab_fiedls.js"],
+    "Item": ["public/js/fetched_cavity_from_mould_on_item.js","public/js/if_fixed_asset_hide_customer_provided_item_checkbox.js","public/js/atleast_one_of_the_mould_checkbox_is_checked.js","public/js/is_mold_and_is_molding_show_hide_mandatory_mold_details_tab_fiedls.js"],
     # "Work Order": "public/js/auto_mold_generation_based_on_work_order.js",
     "Job Card": ["public/js/mould_filter_applied_on_job_card.js","public/js/on_job_card_is_mold_checkbox_checked_then_mandatory_mould_field.js", "public/js/daily_production_log_button.js"],
     "Mould Maintenance Order": ["public/js/create_material_request_and_purchase_order_from_maintenance_order.js","public/js/on_mould_maintenance_order_fetched_total_shot_current_maximum.js"],

@@ -86,16 +86,20 @@ frappe.ui.form.on("Item", {
 	},
 
 	toggle_fields_based_on_checkboxes(frm) {
-		const tabs = [
+		const all_tabs = [
 			"mould_details_tab",
 			"rework_and_checking_details_tab",
 			"part_specification_tab",
 			"packing_details_tab",
 		];
 
+		const moulding_tabs = [
+			"rework_and_checking_details_tab",
+			"part_specification_tab",
+			"packing_details_tab",
+		];
+
 		const moulding_fields = [
-			"mould_details_section",
-			"mould_selection_table",
 			"mould",
 			"cycle_time",
 			"gluing",
@@ -125,7 +129,6 @@ frappe.ui.form.on("Item", {
 		];
 
 		const moulding_required_fields = [
-			"mould_selection_table",
 			"cycle_time",
 			"cavity",
 			"pcs_wt",
@@ -145,6 +148,7 @@ frappe.ui.form.on("Item", {
 			"tool_life",
 			"total_shots",
 			"total_lifecycle_shot",
+			"mould_selection_table",
 			"mould_name",
 			"mould_ty",
 		];
@@ -160,39 +164,32 @@ frappe.ui.form.on("Item", {
 			"tool_life",
 			"total_shots",
 			"total_lifecycle_shot",
+			"mould_selection_table",
 			"mould_name",
 			"mould_ty",
 		];
 
 		const all_monitored_fields = [...moulding_fields, ...mould_item_visible_fields];
 
-		// Reset visibility and mandatory status for all monitored fields
-		tabs.forEach((tab) => frm.set_df_property(tab, "hidden", 1));
+		// Reset visibility and mandatory status for all monitored fields and tabs
+		all_tabs.forEach((tab) => frm.set_df_property(tab, "hidden", 1));
 		all_monitored_fields.forEach((field) => {
 			frm.set_df_property(field, "hidden", 1);
 			frm.set_df_property(field, "reqd", 0);
 		});
 
 		if (frm.doc.is_moulding) {
-			// Show all tabs
-			tabs.forEach((tab) => frm.set_df_property(tab, "hidden", 0));
-			// Show moulding fields
+			moulding_tabs.forEach((tab) => frm.set_df_property(tab, "hidden", 0));
 			moulding_fields.forEach((field) => frm.set_df_property(field, "hidden", 0));
-			frm.set_df_property("cavity", "hidden", 0);
-			frm.refresh_field("cavity");
-			// Make moulding-related fields mandatory
 			moulding_required_fields.forEach((field) => {
 				frm.set_df_property(field, "reqd", 1);
 			});
 		} else if (frm.doc.is_mould_item) {
-			// Show only mould details tab
 			frm.set_df_property("mould_details_tab", "hidden", 0);
 			frm.set_df_property("mould_details_section", "hidden", 0);
-			// Show mould item fields
 			mould_item_visible_fields.forEach((field) => {
 				frm.set_df_property(field, "hidden", 0);
 			});
-			// Make mould item fields mandatory
 			mould_item_required_fields.forEach((field) => {
 				frm.set_df_property(field, "reqd", 1);
 			});

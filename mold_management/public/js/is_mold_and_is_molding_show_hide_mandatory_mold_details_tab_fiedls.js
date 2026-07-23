@@ -69,7 +69,6 @@ frappe.ui.form.on("Item", {
 		];
 
 		const moulding_required_fields = [
-			"mould_selection_table",
 			"cycle_time",
 			"def_1_hrs",
 			"checking_1_hrs",
@@ -174,6 +173,7 @@ frappe.ui.form.on("Item", {
 			moulding_tabs.forEach(showTab);
 			moulding_fields.forEach(showField);
 			moulding_required_fields.forEach(setRequired);
+			frm.set_df_property("mould_selection_table", "reqd", 0);
 		} else if (frm.doc.is_mould_item) {
 			mould_item_tabs.forEach(showTab);
 			mould_item_fields.forEach(showField);
@@ -187,6 +187,7 @@ frappe.ui.form.on("Item", {
 			frm.toggle_display("mould_selection_table", false);
 		}
 
+		frm.set_df_property("mould", "reqd", 0);
 		frm.refresh_fields();
 	},
 });

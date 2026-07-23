@@ -131,7 +131,6 @@ frappe.ui.form.on("Item", {
 			"bending",
 			"clipping",
 			"mould",
-			"other_operations",
 			"mould_name",
 			"mould_ty",
 		];

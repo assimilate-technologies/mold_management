@@ -5,6 +5,11 @@ frappe.ui.form.on("Item", {
 		frm.trigger("toggle_fields_based_on_checkboxes");
 	},
 
+	validate(frm) {
+		frm.set_df_property("mould_selection_table", "reqd", 0);
+		frm.set_df_property("mould", "reqd", 0);
+	},
+
 	is_moulding(frm) {
 		if (frm.doc.is_moulding) {
 			frm.set_value("is_mould_item", 0);

@@ -41,7 +41,8 @@ def execute():
         {
             "fieldname": "req_poly_bags_sizes",
             "label": "Req Polybag Sizes",
-            "fieldtype": "Data",
+            "fieldtype": "Link",
+            "options": "Item",
             "insert_after": "poly_bag_section"
         },
         {
@@ -53,7 +54,8 @@ def execute():
         {
             "fieldname": "req_boxsizes",
             "label": "Req Box Sizes",
-            "fieldtype": "Data",
+            "fieldtype": "Link",
+            "options": "Item",
             "insert_after": "box_packing_section"
         },
         {

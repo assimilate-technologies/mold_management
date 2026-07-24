@@ -3,6 +3,22 @@
 frappe.ui.form.on("Item", {
 	refresh(frm) {
 		frm.trigger("toggle_fields_based_on_checkboxes");
+
+		frm.set_query("req_poly_bags_sizes", function() {
+			return {
+				filters: {
+					"item_sub_group": "Polybags"
+				}
+			};
+		});
+
+		frm.set_query("req_boxsizes", function() {
+			return {
+				filters: {
+					"item_sub_group": "Box"
+				}
+			};
+		});
 	},
 
 	validate(frm) {

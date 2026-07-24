@@ -71,6 +71,13 @@ frappe.ui.form.on("Item", {
 			"part_specification_section",
 			"box_packing_section",
 			"req_poly_bags_sizes",
+			"other_operations",
+			"drilling",
+			"shift_prod",
+			"gluing",
+			"bending",
+			"clipping",
+			"mould",
 		];
 
 		const moulding_required_fields = [
@@ -89,6 +96,12 @@ frappe.ui.form.on("Item", {
 			"pcs_wt",
 			"std_pkg_box",
 			"req_poly_bags_sizes",
+			"drilling",
+			"shift_prod",
+			"gluing",
+			"bending",
+			"clipping",
+			"mould",
 		];
 
 		const mould_item_fields = [

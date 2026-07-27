@@ -93,7 +93,6 @@ frappe.ui.form.on("Item", {
 			"gluing",
 			"bending",
 			"clipping",
-			"mould",
 		];
 
 		const moulding_required_fields = [
@@ -117,7 +116,6 @@ frappe.ui.form.on("Item", {
 			"gluing",
 			"bending",
 			"clipping",
-			"mould",
 		];
 
 		const mould_item_fields = [

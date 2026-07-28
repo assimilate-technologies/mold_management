@@ -4,7 +4,7 @@ frappe.ui.form.on("Item", {
 	refresh(frm) {
 		frm.trigger("toggle_fields_based_on_checkboxes");
 
-		frm.set_query("req_poly_bags_sizes", function() {
+		frm.set_query("req_poly_bags_sizes", function () {
 			return {
 				filters: {
 					"item_sub_group": "Polybags"
@@ -12,7 +12,7 @@ frappe.ui.form.on("Item", {
 			};
 		});
 
-		frm.set_query("req_boxsizes", function() {
+		frm.set_query("req_boxsizes", function () {
 			return {
 				filters: {
 					"item_sub_group": "Box"
@@ -89,7 +89,6 @@ frappe.ui.form.on("Item", {
 			"req_poly_bags_sizes",
 			"other_operations",
 			"drilling",
-			"shift_prod",
 			"gluing",
 			"bending",
 			"clipping",
@@ -112,7 +111,6 @@ frappe.ui.form.on("Item", {
 			"std_pkg_box",
 			"req_poly_bags_sizes",
 			"drilling",
-			"shift_prod",
 			"gluing",
 			"bending",
 			"clipping",
@@ -130,11 +128,6 @@ frappe.ui.form.on("Item", {
 			"total_shots",
 			"total_lifecycle_shot",
 			"mould_details_section",
-			"drilling",
-			"shift_prod",
-			"gluing",
-			"bending",
-			"clipping",
 			"mould",
 			"other_operations",
 			"mould_name",
@@ -152,11 +145,6 @@ frappe.ui.form.on("Item", {
 			"tool_life",
 			"total_shots",
 			"total_lifecycle_shot",
-			"drilling",
-			"shift_prod",
-			"gluing",
-			"bending",
-			"clipping",
 			"mould",
 			"mould_name",
 			"mould_ty",
@@ -199,6 +187,7 @@ frappe.ui.form.on("Item", {
 
 		all_tabs.forEach(hideTab);
 		all_monitored_fields.forEach(hideField);
+		hideField("shift_prod");
 
 		if (frm.doc.is_moulding) {
 			moulding_tabs.forEach(showTab);

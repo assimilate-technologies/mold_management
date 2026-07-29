@@ -292,7 +292,7 @@
    "link_fieldname": "purpose"
   }
  ],
- "modified": "2025-12-19 15:31:10.965612",
+ "modified": "2026-07-29 14:52:02.948613",
  "modified_by": "Administrator",
  "module": "Mold Management",
  "name": "Mould",
@@ -313,10 +313,10 @@
   }
  ],
  "row_format": "Dynamic",
- "search_fields": "mould_name",
+ "search_fields": "mould_name, mould_code",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "mould_name"
+ "title_field": "mould_code"
 }

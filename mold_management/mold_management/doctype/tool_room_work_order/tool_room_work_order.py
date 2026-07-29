@@ -690,8 +690,8 @@ class ToolRoomWorkOrder(Document):
 	def set_operation_start_end_time(self, row, idx):
 		"""Set start and end time for given operation. If first operation, set start as
 		`planned_start_date`, else add time diff to end time of earlier operation."""
-if idx == 0:
-		# first operation at planned_start date
+		if idx == 0:
+			# first operation at planned_start date
 			# If date is not today and no job cards exist for that date, start at first shift start (default 09:00)
 			if getdate(self.planned_start_date) != nowdate():
 				existing = frappe.get_all("Job Card", filters={"tool_room_work_order": self.name, "posting_date": self.planned_start_date}, fields=["name"])

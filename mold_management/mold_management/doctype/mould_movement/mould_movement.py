@@ -84,7 +84,7 @@ class MouldMovement(Document):
 				frappe.throw(_("From Employee is required while issuing Mould {0}").format(d.asset))
 
 		if d.from_employee:
-			current_custodian = frappe.db.get_value("Mould", d.asset, "")
+			current_custodian = frappe.db.get_value("Mould", d.asset, "custodian")
 
 			if current_custodian != d.from_employee:
 				frappe.throw(
@@ -113,20 +113,16 @@ class MouldMovement(Document):
 
 	def get_latest_location_and_custodian(self, asset):
 		current_location, current_employee = "", ""
-		cond = "1=1"
-
-		# latest entry corresponds to current document's location, employee when transaction date > previous dates
-		# In case of cancellation it corresponds to previous latest document's location, employee
 		args = {"asset": asset, "company": self.company}
 		latest_movement_entry = frappe.db.sql(
-			f"""
+			"""
 			SELECT asm_item.target_location, asm_item.to_employee
 			FROM `tabMould Movement Item` asm_item
 			JOIN `tabMould Movement` asm ON asm_item.parent = asm.name
 			WHERE
 				asm_item.asset = %(asset)s AND
 				asm.company = %(company)s AND
-				asm.docstatus = 1 AND {cond}
+				asm.docstatus = 1
 			ORDER BY asm.transaction_date DESC
 			LIMIT 1
 			""",

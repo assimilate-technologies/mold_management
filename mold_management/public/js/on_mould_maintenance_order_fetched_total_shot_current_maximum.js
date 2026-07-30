@@ -9,7 +9,7 @@ frappe.ui.form.on("Mould Maintenance Order", {
 
     set_mould_maintenance_values(frm) {
         // ❌ Do not update after submit
-        if (frm.doc.docstatus == 1) {
+        if (frm.doc.docstatus === 1) {
             return;
         }
 
@@ -51,6 +51,6 @@ frappe.ui.form.on("Mould Maintenance Order", {
                     data.total_shot || 0
                 );
             }
-        });
+        }).catch(err => console.error(err));
     }
 });

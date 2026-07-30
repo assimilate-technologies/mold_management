@@ -33,7 +33,7 @@ def update_mould_dates_from_maintenance(doc):
                 frappe.db.set_value("Mould Maintenance Task", row_name, "last_completion_date", end_date)
                 last_completion = end_date
             except Exception:
-                pass
+                frappe.log_error(frappe.get_traceback(), "update_mould_dates")
  
         # --- Compute next_due_date ---
         base = last_completion or end_date or start_date
@@ -61,6 +61,7 @@ def update_mould_dates_from_maintenance(doc):
                     computed_next = frappe.utils.add_to_date(base, years=3)
  
             except Exception:
+                frappe.log_error(frappe.get_traceback(), "update_mould_dates")
                 computed_next = None
  
         existing_next = row.get("next_due_date")
@@ -70,7 +71,7 @@ def update_mould_dates_from_maintenance(doc):
                 frappe.db.set_value("Mould Maintenance Task", row_name, "next_due_date", computed_next)
                 existing_next = computed_next
             except Exception:
-                pass
+                frappe.log_error(frappe.get_traceback(), "update_mould_dates")
  
         # --- Collect next dates >= today ---
         if existing_next:
@@ -79,7 +80,7 @@ def update_mould_dates_from_maintenance(doc):
                 if nd_dt >= frappe.utils.getdate(frappe.utils.today()):
                     next_dates.append(nd_dt)
             except Exception:
-                pass
+                frappe.log_error(frappe.get_traceback(), "update_mould_dates")
  
         # --- Collect last completion date ---
         chosen_last = last_completion or end_date
@@ -87,7 +88,7 @@ def update_mould_dates_from_maintenance(doc):
             try:
                 last_dates.append(frappe.utils.getdate(chosen_last))
             except Exception:
-                pass
+                frappe.log_error(frappe.get_traceback(), "update_mould_dates")
  
     # --- Prepare final mould values ---
     values = {}

@@ -1276,7 +1276,7 @@ class ToolRoomWorkOrder(Document):
 			where se.name = sed.parent and se.purpose = 'Manufacture'
 			and (sed.t_warehouse is null or sed.t_warehouse = '') and se.docstatus = 1
 			and se.work_order = %s""",
-			(self.name),
+			(self.name,),
 			as_dict=1,
 		)
 

@@ -35,9 +35,10 @@ after_migrate = [
     #  "mold_management.patches.v0_1.add_selection_of_tool_on_item.execute",
     #  "mold_management.patches.v0_1.add_moulds_field_on_item.execute",
     #  "mold_management.patches.v0_1.add_mould_name_field_on_item.execute",
-     "mold_management.patches.v0_1.add_packing_details_tab_on_item.execute",
-     "mold_management.patches.v0_1.add_part_specification_tab_on_item.execute",
-     "mold_management.patches.v0_1.add_rework_and_checking_details.execute",
+     # These Item custom fields are now handled by aims_customization's monolithic patch
+     # "mold_management.patches.v0_1.add_packing_details_tab_on_item.execute",
+     # "mold_management.patches.v0_1.add_part_specification_tab_on_item.execute",
+     # "mold_management.patches.v0_1.add_rework_and_checking_details.execute",
 
      "mold_management.patches.v0_1.add_is_mold_item_field_on_item.execute",
      "mold_management.patches.v0_1.add_other_than_mould_or_moulding_item.execute",

@@ -23,10 +23,10 @@ frappe.ui.form.on("Mould Maintenance", {
 
 		frm.set_indicator_formatter("maintenance_status", function (doc) {
 			let indicator = "blue";
-			if (doc.maintenance_status == "Overdue") {
+			if (doc.maintenance_status === "Overdue") {
 				indicator = "orange";
 			}
-			if (doc.maintenance_status == "Cancelled") {
+			if (doc.maintenance_status === "Cancelled") {
 				indicator = "red";
 			}
 			return indicator;
@@ -48,7 +48,7 @@ frappe.ui.form.on("Mould Maintenance", {
 						return;
 					}
 					const section = frm.dashboard.add_section("", __("Maintenance Log"));
-					var rows = $("<div></div>").appendTo(section);
+					let rows = $("<div></div>").appendTo(section);
 					// show
 					(r.message || []).forEach(function (d) {
 						$(`<div class='row' style='margin-bottom: 10px;'>
@@ -82,8 +82,8 @@ frappe.ui.form.on("Mould Maintenance Task", {
 	},
 });
 
-var get_next_due_date = function (frm, cdt, cdn) {
-	var d = locals[cdt][cdn];
+let get_next_due_date = function (frm, cdt, cdn) {
+	let d = locals[cdt][cdn];
 	if (d.start_date && d.periodicity) {
 		return frappe.call({
 			method: "mold_management.mold_management.doctype.mould_maintenance.mould_maintenance.calculate_next_due_date",

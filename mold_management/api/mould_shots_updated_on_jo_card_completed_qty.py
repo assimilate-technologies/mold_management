@@ -138,8 +138,6 @@ def update_mould_usage(doc, method):
     mould_doc.current_usage_count = new_usage
     mould_doc.save(ignore_permissions=True)
 
-    frappe.db.commit()
-
     frappe.log_error(
         "MOULD UPDATED",
         f"Mould: {doc.mould} | Old: {previous_usage} | Added: {qty} | New: {new_usage}"

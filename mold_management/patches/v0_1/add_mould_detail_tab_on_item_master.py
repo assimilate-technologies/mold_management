@@ -32,11 +32,17 @@ def execute():
     # Step 3: Create custom fields under the section
     custom_fields = [
         {
-            "fieldname": "shape",
-            "label": "Shape",
-            "fieldtype": "Link",
-            "options": "Shape",
-            "insert_after": "mould_ty"
+            "fieldname": "mould_selection_table",
+            "label": "Mould Selection Table",
+            "fieldtype": "Table",
+            "options": "Mould Selection",
+            "insert_after": "mould_details_section"
+        },
+        {
+            "fieldname": "mould_name",
+            "label": "Mould Name",
+            "fieldtype": "Data",
+            "insert_after": "mould_selection_table"
         },
         {
             "fieldname": "mould_ty",
@@ -44,6 +50,13 @@ def execute():
             "fieldtype": "Link",
             "options": "Mould Type",
             "insert_after": "mould_name"
+        },
+        {
+            "fieldname": "shape",
+            "label": "Shape",
+            "fieldtype": "Link",
+            "options": "Shape",
+            "insert_after": "mould_ty"
         },
         {
             "fieldname": "material_type",
@@ -103,98 +116,6 @@ def execute():
             "fieldtype": "Data",
             "insert_after": "total_shots"
         },
-        {
-            "fieldname": "mould_selection_table",
-            "label": "Mould Selection Table",
-            "fieldtype": "Table",
-            "options": "Mould Selection",
-            "insert_after": "mould_details_section"
-        },
-        {
-            "fieldname": "mould_name",
-            "label": "Mould Name",
-            "fieldtype": "Data",      # You can change to Link/Select if needed
-            "insert_after": "mould_selection_table"
-        }
-        # {
-        # "fieldname": "mould",
-        # "label": "Mould",
-        # "fieldtype": "",
-        # "options": "Mould Selection",
-        # "insert_after": "mould_details_section"
-        # },
-        # {
-        # "fieldname": "mould_type",
-        # "fieldtype": "Link",
-        # "label": "Mould Type",
-        # "options": "Mould Type",
-        # "insert_after": "mould"
-        # },
-        # {
-        # "fieldname": "total_shot",
-        # "fieldtype": "Data",
-        # "label": "Total Shot Count",
-        #  "insert_after": "mould_type"
-        # },
-        # {
-        #     "fieldname": "cavity_coun",
-        #     "fieldtype": "Float",
-        #     "label": "No of Cavity",
-        #     "insert_after": "total_shot"
-        # },
-        # {
-        # "fieldname": "mould_lif",
-        # "fieldtype": "Data",
-        # "label": "Mould Life (Years)",
-        # "insert_after": "cavity_coun"
-        # },
-        
-        # {
-        #  "fieldname": "mould_nam",
-        #  "fieldtype": "Data",
-        #  "label": "Mould Name",
-        #  "insert_after": "mould_lif"
-        # },
-        # {
-        #     "fieldname": "shap",
-        #     "fieldtype": "Link",
-        #     "options": "Shape",
-        #     "label": "Shape",
-        #     "insert_after": "mould_nam"
-        # },
-        # {
-        #     "fieldname": "material_typ",
-        #     "fieldtype": "Link",
-        #     "options": "Material Type",
-        #     "label": "Material Type",
-        #     "insert_after": "shap"
-        # },
-        # {
-        #     "fieldname": "Tool_le",
-        #     "field_type": "Data",
-        #     "label": "Mould Life (Years)",
-        #     "insert_after": "material_typ"
-        # },
-        # {
-        #     "fieldname": "total_shot",
-        #     "field_type": "Data",
-        #     "label": "Total Shots",
-        #     "insert_after": "Tool_le"
-        # },
-        # {
-        #     "fieldname": "is_side",
-        #     "field_type": "Select",
-        #     "options": "\nYes\nNo\",
-        #     "label": "Is Side Core",
-        #     "insert_after": "total_shot"
-        # },
-        # {
-        #     "fieldname": "side_core",
-        #     "field_type": "Data",
-        #     "label": "Side Core Nos",
-        #     "insert_after": "is_side"
-        # }
-        
     ]
 
     

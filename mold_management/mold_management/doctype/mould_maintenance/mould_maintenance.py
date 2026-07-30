@@ -320,7 +320,7 @@ def update_maintenance_log(mould_maintenance, task, maintenance_team, required_p
 	)
 
 	if not mould_maintenance_order:
-		mould_maintenance_order = frappe.get_doc(
+		mould_maintenance_order_doc = frappe.get_doc(
 			{
 				"doctype": "Mould Maintenance Order",
 				"mould_maintenance": mould_maintenance,
@@ -339,10 +339,10 @@ def update_maintenance_log(mould_maintenance, task, maintenance_team, required_p
 			}
 		)
 
-		mould_maintenance_order.insert()
+		mould_maintenance_order_doc.insert()
 
 	else:
-		maintenance_log = frappe.get_doc("Mould Maintenance Order", mould_maintenance_order.name)
+		maintenance_log = frappe.get_doc("Mould Maintenance Order", mould_maintenance_order)
 		maintenance_log.assign_to_name = task.assign_to_name
 		maintenance_log.has_certificate = task.certificate_required
 		maintenance_log.description = task.description
@@ -369,6 +369,6 @@ def get_maintenance_log(mould_name):
 		from `tabMould Maintenance Order`
 		where mould_name=%s group by maintenance_status
 		""",
-		(mould_name),
+		(mould_name,),
 		as_dict=1,
 	)

@@ -59,7 +59,7 @@ frappe.ui.form.on("Moulds Parameter", {
                 mould_no:row.mould_no
             },
             callback: function(r) {
-                console.log(r)
+                // console.log(r)
                 if (r.message) {
                    
                  //   frappe.model.set_value(cdt, cdn, "value", r.message.value);

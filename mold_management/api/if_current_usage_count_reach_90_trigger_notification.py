@@ -186,4 +186,3 @@ def check_mould_usage(doc, method=None):
 
         # ✅ Mark as sent (avoid duplicate notifications)
         frappe.db.set_value("Mould", doc.name, "email_sent_90_percent", 1)
-        frappe.db.commit()

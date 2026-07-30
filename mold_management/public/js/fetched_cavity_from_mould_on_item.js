@@ -6,7 +6,7 @@ frappe.ui.form.on('Item', {
                     if (r && r.message) {
                         frm.set_value('cavity', r.message.cavity_count);
                     }
-                });
+                }).catch(err => console.error(err));
         } else {
             frm.set_value('cavity', '');
         }

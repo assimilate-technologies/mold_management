@@ -62,7 +62,8 @@ def add_production_log_entry(job_card, time_slot, ok_shots, rej_shots, operator=
         dpl.anti_static = item.get("anti_static")
         
         if dpl.shift_target:
-            dpl.hourly_target = flt(dpl.shift_target) / 12  # Assuming 12hr shift
+            shift_hours = frappe.db.get_single_value("Manufacturing Settings", "moulding_shift_hours") or 12
+            dpl.hourly_target = flt(dpl.shift_target) / flt(shift_hours)
         
         # Fetch Mould details
         if mould_val:
@@ -108,7 +109,7 @@ def add_production_log_entry(job_card, time_slot, ok_shots, rej_shots, operator=
                 if last_log:
                     dpl.first_counter = frappe.db.get_value("Daily Production Log", last_log[0].name, "last_counter")
             except Exception:
-                pass # Give up on fetching first counter if both fail
+                frappe.log_error(frappe.get_traceback(), "production_log_fetch_first_counter")
 
         dpl.insert()
     
@@ -147,11 +148,11 @@ def update_totals(dpl):
     # Update last_counter
     dpl.last_counter = flt(dpl.first_counter or 0) + total_ok + total_rej
     
-    # RM Consumption calculation (grams to kg)
+    # RM Consumption calculation (weights are in kg per the field labels)
     if dpl.get("shot_weight") or dpl.get("runner_weight"):
         s_wt = flt(dpl.get("shot_weight"))
         r_wt = flt(dpl.get("runner_weight"))
-        dpl.rm_consumption = (s_wt + r_wt) * (total_ok + total_rej) / 1000
+        dpl.rm_consumption = (s_wt + r_wt) * (total_ok + total_rej)
 
 @frappe.whitelist()
 def get_job_cards_for_work_order(work_order):

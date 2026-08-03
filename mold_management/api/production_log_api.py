@@ -72,9 +72,9 @@ def add_production_log_entry(job_card, time_slot, ok_shots, rej_shots, operator=
             dpl.total_cavity = mould_doc.get("cavity_count")
             dpl.running_cavity = mould_doc.get("cavity_count")
             if not dpl.shot_weight:
-            dpl.shot_weight = mould_doc.get("shot_weight")
-        if not dpl.runner_weight:
-            dpl.runner_weight = mould_doc.get("runner_weight")
+                dpl.shot_weight = mould_doc.get("shot_weight")
+            if not dpl.runner_weight:
+                dpl.runner_weight = mould_doc.get("runner_weight")
             dpl.total_shots = mould_doc.get("total_shots")
 
         # Raw Material and Masterbatch fallback mapping

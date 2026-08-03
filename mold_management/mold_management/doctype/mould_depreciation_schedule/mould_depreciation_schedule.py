@@ -360,7 +360,7 @@ class MouldDepreciationSchedule(Document):
 				if self.depreciation_schedule:
 					from_date = add_days(self.depreciation_schedule[-1].schedule_date, 1)
 
-				depreciation_amount, days, months = _get_pro_rata_amt(
+				depreciation_amount, days, _months = _get_pro_rata_amt(
 					row,
 					depreciation_amount,
 					from_date,
@@ -386,7 +386,7 @@ class MouldDepreciationSchedule(Document):
 			):
 				from_date = mould_doc.available_for_use_date
 				# needed to calc depr amount for available_for_use_date too
-				depreciation_amount, days, months = _get_pro_rata_amt(
+				depreciation_amount, days, _months = _get_pro_rata_amt(
 					row,
 					depreciation_amount,
 					from_date,

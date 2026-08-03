@@ -2,29 +2,10 @@
 # License: GNU General Public License v3. See license.txt
 
 import json
+from datetime import datetime as _dt
 
 import frappe
-from datetime import datetime as _dt
 from dateutil.relativedelta import relativedelta
-from frappe import _
-from frappe.model.document import Document
-from frappe.model.mapper import get_mapped_doc
-from frappe.query_builder import Case
-from frappe.query_builder.functions import Sum
-from frappe.utils import (
-	cint,
-	date_diff,
-	flt,
-	get_datetime,
-	get_link_to_form,
-	getdate,
-	now,
-	nowdate,
-	time_diff_in_hours,
-	get_time,
-)
-from pypika import functions as fn
-
 from erpnext.manufacturing.doctype.bom.bom import (
 	get_bom_item_rate,
 	get_bom_items_as_dict,
@@ -39,6 +20,24 @@ from erpnext.stock.doctype.serial_no.serial_no import get_available_serial_nos, 
 from erpnext.stock.stock_balance import get_planned_qty, update_bin_qty
 from erpnext.stock.utils import get_bin, get_latest_stock_qty, validate_warehouse_company
 from erpnext.utilities.transaction_base import validate_uom_is_integer
+from frappe import _
+from frappe.model.document import Document
+from frappe.model.mapper import get_mapped_doc
+from frappe.query_builder import Case
+from frappe.query_builder.functions import Sum
+from frappe.utils import (
+	cint,
+	date_diff,
+	flt,
+	get_datetime,
+	get_link_to_form,
+	get_time,
+	getdate,
+	now,
+	nowdate,
+	time_diff_in_hours,
+)
+from pypika import functions as fn
 
 
 class OverProductionError(frappe.ValidationError):
@@ -74,7 +73,9 @@ class ToolRoomWorkOrder(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		from mold_management.mold_management.doctype.tool_room_work_order_item.tool_room_work_order_item import ToolRoomWorkOrderItem
+		from mold_management.mold_management.doctype.tool_room_work_order_item.tool_room_work_order_item import (
+			ToolRoomWorkOrderItem,
+		)
 		from mold_management.mold_management.doctype.tool_room_work_order_operation.tool_room_work_order_operation import (
 			ToolRoomWorkOrderOperation,
 		)
@@ -1299,7 +1300,7 @@ class ToolRoomWorkOrder(Document):
 @frappe.validate_and_sanitize_search_inputs
 def get_bom_operations(doctype, txt, searchfield, start, page_len, filters):
 	if txt:
-		filters["operation"] = ("like", "%%%s%%" % txt)
+		filters["operation"] = ("like", f"%{txt}%")
 
 	return frappe.get_all("BOM Operation", filters=filters, fields=["operation"], as_list=1)
 
@@ -1471,7 +1472,7 @@ def make_stock_entry(work_order_id, purpose, qty=None, target_warehouse=None):
 
 	stock_entry = frappe.new_doc("Stock Entry")
 	stock_entry.purpose = purpose
-	
+
 	stock_entry.tool_room_work_order = work_order_id
 	stock_entry.company = work_order.company
 	stock_entry.items = work_order.required_items

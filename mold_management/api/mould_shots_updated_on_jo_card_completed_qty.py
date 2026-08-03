@@ -12,7 +12,7 @@
 
 #     # Check if usage exceeded maximum limit
 #     # if frappe.utils.flt(mould_doc.current_usage_count) > frappe.utils.flt(mould_doc.maximum_usage_count):
-        
+
 #     #     users_to_notify = ["kulkarnirahul134@gmail.com"]
 
 #     #     for user_email in users_to_notify:
@@ -41,7 +41,7 @@
 # @frappe.whitelist()
 # def update_mould_usage(docname):
 #     """
-#     Update mould usage based on Job Card submission  
+#     Update mould usage based on Job Card submission
 #     docname = Job Card name
 #     """
 
@@ -90,7 +90,7 @@
 #     """
 #     This is triggered from hooks.py:
 #     'on_update': 'mold_management.api.mould_shots_updated_on_jo_card_completed_qty.update_mould_usage'
-    
+
 #     Frappe automatically passes:
 #         doc    = Job Card document
 #         method = on_update
@@ -113,6 +113,7 @@
 
 
 import frappe
+
 
 def update_mould_usage(doc, method):
 

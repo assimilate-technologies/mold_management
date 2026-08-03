@@ -7,7 +7,9 @@ from frappe.tests.utils import FrappeTestCase, change_settings, timeout
 from frappe.utils import add_days, add_months, add_to_date, cint, flt, now, today
 
 from mold_management.mold_management.doctype.job_card.job_card import JobCardCancelError
-from mold_management.mold_management.doctype.job_card.job_card import make_stock_entry as make_stock_entry_from_jc
+from mold_management.mold_management.doctype.job_card.job_card import (
+	make_stock_entry as make_stock_entry_from_jc,
+)
 from mold_management.mold_management.doctype.production_plan.test_production_plan import make_bom
 from mold_management.mold_management.doctype.tool_room_work_order.tool_room_work_order import (
 	CapacityError,
@@ -2765,7 +2767,10 @@ class TestWorkOrder(FrappeTestCase):
 		frappe.db.set_single_value("Stock Settings", "pick_serial_and_batch_based_on", original_based_on)
 
 	def test_operations_time_planning_calculation(self):
-		from mold_management.mold_management.doctype.routing.test_routing import create_routing, setup_operations
+		from mold_management.mold_management.doctype.routing.test_routing import (
+			create_routing,
+			setup_operations,
+		)
 
 		operations = [
 			{"operation": "Test Operation A", "workstation": "Test Workstation A", "time_in_mins": 1},

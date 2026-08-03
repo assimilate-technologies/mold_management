@@ -1,7 +1,9 @@
 # Copyright (c) 2022, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
+import erpnext
 import frappe
+from erpnext.accounts.utils import get_fiscal_year
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import (
@@ -18,9 +20,6 @@ from frappe.utils import (
 	is_last_day_of_the_month,
 	month_diff,
 )
-
-import erpnext
-from erpnext.accounts.utils import get_fiscal_year
 
 
 class MouldDepreciationSchedule(Document):
@@ -299,7 +298,7 @@ class MouldDepreciationSchedule(Document):
 			row.depreciation_method in ("Written Down Value", "Double Declining Balance")
 			and cint(row.frequency_of_depreciation) != 12
 		):
-			has_wdv_or_dd_non_yearly_pro_rata = _check_is_pro_rata(asset_doc, row, wdv_or_dd_non_yearly=True)
+			has_wdv_or_dd_non_yearly_pro_rata = _check_is_pro_rata(mould_doc, row, wdv_or_dd_non_yearly=True)
 
 		skip_row = False
 		should_get_last_day = is_last_day_of_the_month(row.depreciation_start_date)
@@ -405,7 +404,7 @@ class MouldDepreciationSchedule(Document):
 						)
 					)
 			elif n == 0 and has_wdv_or_dd_non_yearly_pro_rata and self.opening_accumulated_depreciation:
-				if not is_first_day_of_the_month(getdate(asset_doc.available_for_use_date)):
+				if not is_first_day_of_the_month(getdate(mould_doc.available_for_use_date)):
 					from_date = get_last_day(
 						add_months(
 							getdate(mould_doc.available_for_use_date),
@@ -420,7 +419,7 @@ class MouldDepreciationSchedule(Document):
 						getdate(add_days(mould_doc.available_for_use_date, -1)),
 						(self.opening_number_of_booked_depreciations * row.frequency_of_depreciation),
 					)
-				depreciation_amount, days, months = _get_pro_rata_amt(
+				depreciation_amount, days, _months = _get_pro_rata_amt(
 					row,
 					depreciation_amount,
 					from_date,
@@ -442,7 +441,7 @@ class MouldDepreciationSchedule(Document):
 
 				depreciation_amount_without_pro_rata = depreciation_amount
 
-				depreciation_amount, days, months = _get_pro_rata_amt(
+				depreciation_amount, days, _months = _get_pro_rata_amt(
 					row,
 					depreciation_amount,
 					schedule_date,
@@ -750,7 +749,7 @@ def get_daily_prorata_based_straight_line_depr(
 ):
 	daily_depr_amount = get_daily_depr_amount(mould, row, schedule_idx, amount)
 
-	from_date, total_depreciable_days = _get_total_days(
+	_from_date, total_depreciable_days = _get_total_days(
 		row.depreciation_start_date, schedule_idx, row.frequency_of_depreciation
 	)
 	return daily_depr_amount * total_depreciable_days
@@ -981,7 +980,7 @@ def get_monthly_depr_amount_based_on_prev_per_day_depr(fb_row, schedule_idx, pre
 	Returns monthly depreciation amount based on prev per day depr
 	Calculate per day depr only for the first month
 	"""
-	from_date, days_in_month = _get_total_days(
+	_from_date, days_in_month = _get_total_days(
 		fb_row.depreciation_start_date, schedule_idx, cint(fb_row.frequency_of_depreciation)
 	)
 	return (prev_per_day_depr * days_in_month), prev_per_day_depr

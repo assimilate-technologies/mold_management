@@ -1,5 +1,6 @@
 import frappe
 
+
 def execute():
     # Step 1: Create Tab Break for "Mould Details"
     if not frappe.db.exists("Custom Field", {"dt": "Item", "fieldname": "part_specification_tab"}):
@@ -23,7 +24,7 @@ def execute():
             "insert_after": "part_specification_tab"
         }).insert(ignore_permissions=True)
 
-    
+
     if not frappe.db.exists("Custom Field", {"dt": "Item", "fieldname": "other_operations"}):
         frappe.get_doc({
             "doctype": "Custom Field",
@@ -36,13 +37,13 @@ def execute():
 
     # Step 3: Create custom fields under the section
     custom_fields = [
-        
-        
+
+
         {
             "fieldname": "cavity",
             "label": "Cavity",
             "fieldtype": "Int",
-            
+
             "insert_after": "part_specification_section"
         },
         {
@@ -117,12 +118,12 @@ def execute():
             "options": "Mould",
             "insert_after": "clipping"
         }
-        
 
-        
+
+
     ]
 
-    
+
 
 
     for field in custom_fields:
@@ -133,5 +134,5 @@ def execute():
                 **field
             }).insert(ignore_permissions=True)
 
-    
+
     frappe.clear_cache()

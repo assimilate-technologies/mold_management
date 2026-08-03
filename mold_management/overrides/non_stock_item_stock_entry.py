@@ -1,10 +1,10 @@
 import frappe
-from frappe.utils import flt
 from erpnext.stock.doctype.stock_entry.stock_entry import StockEntry
- 
- 
+from frappe.utils import flt
+
+
 class CustomStockEntry(StockEntry):
- 
+
     def has_non_stock_items(self):
         """Check if Stock Entry contains any non-stock item"""
         for row in self.items:
@@ -14,7 +14,7 @@ class CustomStockEntry(StockEntry):
             if not is_stock:
                 return True
         return False
- 
+
     def validate(self):
         if not self.has_non_stock_items():
             return super().validate()
@@ -24,9 +24,9 @@ class CustomStockEntry(StockEntry):
 
         for row in self.items:
             if not row.item_code:
-                frappe.throw("Item Code is required in row {0}".format(row.idx))
+                frappe.throw(f"Item Code is required in row {row.idx}")
             if not row.qty or flt(row.qty) <= 0:
-                frappe.throw("Quantity must be greater than 0 in row {0}".format(row.idx))
+                frappe.throw(f"Quantity must be greater than 0 in row {row.idx}")
             if row.s_warehouse:
                 frappe.get_doc("Warehouse", row.s_warehouse)
             if row.t_warehouse:
@@ -46,10 +46,10 @@ class CustomStockEntry(StockEntry):
                 filtered.append(sle)
 
         super().make_sl_entries(
+            *args,
             filtered,
             allow_negative_stock=allow_negative_stock,
             via_landed_cost_voucher=via_landed_cost_voucher,
-            *args,
             **kwargs
         )
 

@@ -1,5 +1,6 @@
 import frappe
 
+
 def execute():
     # Step 1: Create Tab Break for "Mould Details"
     if not frappe.db.exists("Custom Field", {"dt": "Item", "fieldname": "rework_and_checking_details_tab"}):
@@ -23,13 +24,13 @@ def execute():
             "insert_after": "rework_and_checking_details_tab"
         }).insert(ignore_permissions=True)
 
-    
 
-    
+
+
 
     # Step 3: Create custom fields under the section
     custom_fields = [
-        
+
         {
             "fieldname": "def_1_hrs",
             "label": "DEF in 1HRS",
@@ -54,12 +55,12 @@ def execute():
             "fieldtype": "Int",
             "insert_after": "checking_1_hrs"
         }
-        
 
-        
+
+
     ]
 
-    
+
 
 
     for field in custom_fields:

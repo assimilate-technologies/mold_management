@@ -1,5 +1,6 @@
 import frappe
 
+
 def execute():
     # Step 1: Create Tab Break for "Mould Details"
     if not frappe.db.exists("Custom Field", {"dt": "Item", "fieldname": "mould_details_tab"}):
@@ -25,9 +26,9 @@ def execute():
             "insert_after": "mould_details_tab"
         }).insert(ignore_permissions=True)
 
-    
 
-    
+
+
 
     # Step 3: Create custom fields under the section
     custom_fields = [
@@ -118,7 +119,7 @@ def execute():
         },
     ]
 
-    
+
 
 
     for field in custom_fields:

@@ -1,6 +1,7 @@
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
 
+
 def execute():
     print("Adding custom fields to BOM Item...")
 
@@ -12,8 +13,8 @@ def execute():
             "insert_after": "is_stock_item",
             "fetch_from": "item_code.is_mould_item",
         },
-        
-        
+
+
         {
             "fieldname": "side_cores",
             "label": "Side Cores",
@@ -74,7 +75,7 @@ def execute():
             "fetch_from": "item_code.mould_name"
         },
         {
-            
+
             "fieldname": "mould_tw",
             "label": "Mould Type",
             "fieldtype": "Link",

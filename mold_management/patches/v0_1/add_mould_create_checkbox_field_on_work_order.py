@@ -1,9 +1,10 @@
 import frappe
 
+
 def execute():
     # Check if field already exists
     if not frappe.db.exists("Custom Field", "Work Order-mould_created"):
-        
+
         custom_field = {
             "doctype": "Custom Field",
             "dt": "Work Order",

@@ -150,6 +150,7 @@
 import frappe
 from frappe.utils import today
 
+
 def create_mould_on_stock_entry(doc, method):
     """
     Create Mould records and optionally Asset
@@ -287,7 +288,7 @@ def create_asset_from_work_order(wo):
         "purchase_receipt": None,
         "is_existing_asset": 0,
         "maintenance_required": 1
-        
+
     })
 
     asset.insert(ignore_permissions=True)

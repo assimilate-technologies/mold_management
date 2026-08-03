@@ -1,6 +1,7 @@
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
 
+
 def execute():
     # ---- Added new custom field for Item ----
     field = {

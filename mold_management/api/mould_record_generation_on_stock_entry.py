@@ -183,7 +183,7 @@ def create_mould_on_stock_entry(doc, method):
             asset_created = None
 
             # ==================================================
-            # CASE 1 → ONLY MOULD
+            # CASE 1 → ONLY MOULD (stock item, customer provided)
             # is_mould_item = Yes
             # maintain_stock = Yes
             # is_customer_provided_item = Yes
@@ -205,7 +205,7 @@ def create_mould_on_stock_entry(doc, method):
                 )
 
             # ==================================================
-            # CASE 2 → MOULD + ASSET
+            # CASE 2 → MOULD + ASSET (non-stock, fixed asset)
             # is_mould_item = Yes
             # maintain_stock = No
             # is_customer_provided_item = No
@@ -229,10 +229,58 @@ def create_mould_on_stock_entry(doc, method):
                     f"for Work Order {wo.name}"
                 )
 
+            # ==================================================
+            # CASE 3 → ONLY MOULD (stock item, also fixed asset)
+            # is_mould_item = Yes
+            # maintain_stock = Yes
+            # is_fixed_asset = Yes
+            # (Customer provided doesn't matter - asset won't be created for stock items)
+            # ==================================================
+            elif (
+                wo.is_mould_item
+                and wo.maintain_stock
+                and wo.is_fixed_asset
+            ):
+                for _ in range(qty):
+                    create_mould(wo, doc)
+                    mould_created += 1
+
+                message = (
+                    f"{mould_created} Mould record(s) created "
+                    f"for Work Order {wo.name}. "
+                    f"Asset not created because Maintain Stock is checked."
+                )
+
+            # ==================================================
+            # CASE 4 → ONLY MOULD (stock item, not customer provided, not fixed asset)
+            # is_mould_item = Yes
+            # maintain_stock = Yes
+            # is_customer_provided_item = No
+            # is_fixed_asset = No
+            # ==================================================
+            elif (
+                wo.is_mould_item
+                and wo.maintain_stock
+                and not wo.is_customer_provided_item
+                and not wo.is_fixed_asset
+            ):
+                for _ in range(qty):
+                    create_mould(wo, doc)
+                    mould_created += 1
+
+                message = (
+                    f"{mould_created} Mould record(s) created "
+                    f"for Work Order {wo.name}"
+                )
+
             else:
                 message = (
                     f"Mould not created: Work Order {wo.name} "
-                    f"does not match any valid configuration"
+                    f"does not match any valid configuration. "
+                    f"is_mould_item={wo.is_mould_item}, "
+                    f"maintain_stock={wo.maintain_stock}, "
+                    f"is_customer_provided_item={wo.is_customer_provided_item}, "
+                    f"is_fixed_asset={wo.is_fixed_asset}"
                 )
 
     # --------------------------------------------------

@@ -77,14 +77,16 @@ doc_events = {
         "on_update": "mold_management.api.if_current_usage_count_reach_90_trigger_notification.check_mould_usage"
     },
 
+    "Item": {
+        "on_update": "mold_management.api.create_mould_and_asset_on_item.create_mould_and_asset_on_item_update"
+    },
+
     # "Mould Maintenance": {
     #     "on_update": "mold_management.api.update_last_maintenence_date_and_next_maintenance_date.update_mould_dates_from_maintenance"
     # },
 
     "Stock Entry": {
-        "on_submit": ["mold_management.api.mould_record_generation_on_stock_entry.create_mould_on_stock_entry",
-                      "mold_management.api.allow_non_stock_item_in_stock_entry.check_non_stock_items"
-        ]
+        "on_submit": "mold_management.api.allow_non_stock_item_in_stock_entry.check_non_stock_items"
     },
 
     "Mould Maintenance Order": {

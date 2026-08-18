@@ -31,13 +31,13 @@ def execute():
 
     # Step 3: Create custom fields under the section
     custom_fields = [
-        {
-            "fieldname": "shape",
-            "label": "Shape",
-            "fieldtype": "Link",
-            "options": "Shape",
-            "insert_after": "mould_ty"
-        },
+        # {
+        #     "fieldname": "shape",
+        #     "label": "Shape",
+        #     "fieldtype": "Link",
+        #     "options": "Shape",
+        #     "insert_after": "mould_ty"
+        # },
         {
             "fieldname": "mould_ty",
             "label": "Mould Type",
@@ -45,13 +45,13 @@ def execute():
             "options": "Mould Type",
             "insert_after": "mould_name"
         },
-        {
-            "fieldname": "material_type",
-            "label": "Material Type",
-            "fieldtype": "Link",
-            "options": "Material Type",
-            "insert_after": "shape"
-        },
+        # {
+        #     "fieldname": "material_type",
+        #     "label": "Material Type",
+        #     "fieldtype": "Link",
+        #     "options": "Material Type",
+        #     "insert_after": "shape"
+        # },
         {
             "fieldname": "no_of_cavity",
             "label": "No of Cavity",

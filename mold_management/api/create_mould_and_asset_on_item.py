@@ -61,6 +61,8 @@ def create_asset_from_item(doc):
 		or frappe.db.get_value("Company", {}, "name")
 	)
 
+	ensure_location("Pune")
+
 	asset = frappe.get_doc(
 		{
 			"doctype": "Asset",
@@ -78,3 +80,10 @@ def create_asset_from_item(doc):
 	)
 	asset.insert(ignore_permissions=True)
 	asset.submit()
+
+
+def ensure_location(location_name):
+	if not frappe.db.exists("Location", location_name):
+		frappe.get_doc({"doctype": "Location", "location_name": location_name}).insert(
+			ignore_permissions=True
+		)

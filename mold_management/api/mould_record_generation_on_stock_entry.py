@@ -319,6 +319,8 @@ def create_mould(wo, doc):
 # Helper → Create & Submit Asset (MANDATORY SAFE)
 # ==================================================
 def create_asset_from_work_order(wo):
+    ensure_location("Pune")
+
     asset = frappe.get_doc({
         "doctype": "Asset",
         "asset_name": wo.mould_name,
@@ -331,6 +333,7 @@ def create_asset_from_work_order(wo):
         "purchase_date": today(),
         "available_for_use_date": today(),
         "gross_purchase_amount": 1,
+        "net_purchase_amount": 1,
 
         # Optional
         "purchase_receipt": None,
@@ -343,3 +346,10 @@ def create_asset_from_work_order(wo):
     asset.submit()
 
     return asset
+
+
+def ensure_location(location_name):
+    if not frappe.db.exists("Location", location_name):
+        frappe.get_doc({"doctype": "Location", "location_name": location_name}).insert(
+            ignore_permissions=True
+        )

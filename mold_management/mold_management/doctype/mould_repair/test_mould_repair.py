@@ -4,6 +4,10 @@
 import unittest
 
 import frappe
+from frappe import qb
+from frappe.query_builder.functions import Sum
+from frappe.utils import add_days, add_months, flt, get_first_day, nowdate, nowtime, today
+
 from erpnext.assets.doctype.asset.asset import (
 	get_asset_account,
 	get_asset_value_after_depreciation,
@@ -22,9 +26,6 @@ from erpnext.stock.doctype.serial_and_batch_bundle.test_serial_and_batch_bundle 
 	get_serial_nos_from_bundle,
 	make_serial_batch_bundle,
 )
-from frappe import qb
-from frappe.query_builder.functions import Sum
-from frappe.utils import add_days, add_months, flt, get_first_day, nowdate, nowtime, today
 
 
 class MouldAssetRepair(unittest.TestCase):
@@ -35,7 +36,7 @@ class MouldAssetRepair(unittest.TestCase):
 		create_item("_Test Stock Item")
 		frappe.db.sql("delete from `tabTax Rule`")
 
-		purchase_date = add_months(get_first_day(today()), -2)
+		purchase_date = add_months(get_first_day(date), -2)
 
 		asset = create_asset(
 			calculate_depreciation=1,
@@ -49,16 +50,16 @@ class MouldAssetRepair(unittest.TestCase):
 
 		si = make_sales_invoice(asset=asset.name, item_code="Macbook Pro", company="_Test Company")
 		si.customer = "_Test Customer"
-		si.due_date = today()
+		si.due_date = date
 		si.get("items")[0].rate = 25000
 		si.insert()
 		si.submit()
 
 		asset.reload()
-		cls.assertEqual(frappe.db.get_value("Mould", asset.name, "status"), "Sold")
+		self.assertEqual(frappe.db.get_value("Mould", asset.name, "status"), "Sold")
 		asset_repair = frappe.new_doc("Mould Repair")
 		asset_repair.update({"company": "_Test Company", "asset": asset.name, "asset_name": asset.asset_name})
-		cls.assertRaises(frappe.ValidationError, asset_repair.save)
+		self.assertRaises(frappe.ValidationError, asset_repair.save)
 
 	def test_update_status(self):
 		asset = create_asset(submit=1)

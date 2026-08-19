@@ -107,7 +107,7 @@ frappe.ui.form.on("Mould Movement Item", {
 						frappe.model.set_value(cdt, cdn, "from_employee", asset_doc.custodian);
 				})
 				.catch((err) => {
-					// console.log(err);// eslint-disable-line
+					console.log(err); // eslint-disable-line
 				});
 		}
 	},

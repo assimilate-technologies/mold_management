@@ -9,7 +9,7 @@ frappe.ui.form.on("Mould Maintenance", {
 
     set_mould_values(frm) {
         // ❌ Do not update after submit
-        if (frm.doc.docstatus === 1) {
+        if (frm.doc.docstatus == 1) {
             return;
         }
 
@@ -47,6 +47,6 @@ frappe.ui.form.on("Mould Maintenance", {
                     data.maximum_usage_count || 0
                 );
             }
-        }).catch(err => console.error(err));
+        });
     }
 });

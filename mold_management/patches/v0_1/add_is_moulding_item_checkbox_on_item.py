@@ -1,6 +1,5 @@
 import frappe
 
-
 def execute():
     # Check if field already exists
     if not frappe.db.exists("Custom Field", "Item-is_moulding"):

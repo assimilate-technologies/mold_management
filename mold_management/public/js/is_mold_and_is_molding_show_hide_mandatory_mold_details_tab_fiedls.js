@@ -117,8 +117,8 @@ frappe.ui.form.on("Item", {
 		];
 
 		const mould_item_fields = [
-			"shape",
-			"material_type",
+			// "shape",
+			// "material_type",
 			"no_of_cavity",
 			"side_cores",
 			"side_cores_qty",
@@ -135,8 +135,8 @@ frappe.ui.form.on("Item", {
 		];
 
 		const mould_item_required_fields = [
-			"shape",
-			"material_type",
+			// "shape",
+			// "material_type",
 			"no_of_cavity",
 			"side_cores",
 			"side_cores_qty",

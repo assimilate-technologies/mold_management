@@ -4,6 +4,7 @@
 # import frappe
 from frappe.tests import IntegrationTestCase, UnitTestCase
 
+
 # On IntegrationTestCase, the doctype test records and all
 # link-field test record dependencies are recursively loaded
 # Use these module variables to add/remove to/from that list

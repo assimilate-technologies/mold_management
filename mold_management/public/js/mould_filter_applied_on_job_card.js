@@ -15,7 +15,7 @@
 //                 .filter(row => row.mould_no)
 //                 .map(row => row.mould_no);
 
-//             // console.log("FINAL MOULD LIST:", mould_nos);// Debug
+//             console.log("FINAL MOULD LIST:", mould_nos); // Debug
 
 //             frm.mould_no_options = mould_nos;
 
@@ -81,5 +81,5 @@ function apply_mould_filter(frm) {
         };
 
         frm.refresh_field('mould');
-    }).catch(err => console.error(err));
+    });
 }

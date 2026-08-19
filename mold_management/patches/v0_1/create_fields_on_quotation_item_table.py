@@ -1,7 +1,6 @@
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
 
-
 def execute():
     print("Adding custom fields to Quotation Item...")
 
@@ -89,7 +88,7 @@ def execute():
             "fetch_from": "item_code.mould_name",
         },
         {
-
+            
             "fieldname": "mould_ti",
             "label": "Mould Type",
             "fieldtype": "Link",

@@ -71,8 +71,8 @@ frappe.pages['in-process-inspectio'].on_page_load = function (wrapper) {
 				$('#filter_shift').on('change', () => {
 					const selected = $('#filter_shift option:selected');
 					if (selected.val()) {
-						shift_start = parseInt(selected.data('start', 10).split(':')[0]) || 8;
-						shift_end = parseInt(selected.data('end', 10).split(':')[0]) || 20;
+						shift_start = parseInt(selected.data('start').split(':')[0]) || 8;
+						shift_end = parseInt(selected.data('end').split(':')[0]) || 20;
 						if (shift_end === 0) shift_end = 24;
 					} else {
 						shift_start = 8;

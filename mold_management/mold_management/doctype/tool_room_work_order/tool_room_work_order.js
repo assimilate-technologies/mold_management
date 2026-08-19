@@ -114,7 +114,7 @@ frappe.ui.form.on("Tool Room Work Order", {
 
 		// formatter for work order operation
 		frm.set_indicator_formatter("operation", function (doc) {
-			return frm.doc.qty === doc.completed_qty ? "green" : "orange";
+			return frm.doc.qty == doc.completed_qty ? "green" : "orange";
 		});
 	},
 
@@ -179,7 +179,7 @@ frappe.ui.form.on("Tool Room Work Order", {
 			frm.trigger("show_progress_for_operations");
 		}
 
-		if (frm.doc.status !== "Closed") {
+		if (frm.doc.status != "Closed") {
 			if (
 				frm.doc.docstatus === 1 &&
 				frm.doc.status !== "Completed" &&
@@ -187,7 +187,7 @@ frappe.ui.form.on("Tool Room Work Order", {
 				frm.doc.operations.length
 			) {
 				const not_completed = frm.doc.operations.filter((d) => {
-					if (d.status !== "Completed") {
+					if (d.status != "Completed") {
 						return true;
 					}
 				});
@@ -200,8 +200,8 @@ frappe.ui.form.on("Tool Room Work Order", {
 			}
 		}
 
-		if (frm.doc.status === "Completed") {
-			if (frm.doc.__onload.backflush_raw_materials_based_on === "Material Transferred for Manufacture") {
+		if (frm.doc.status == "Completed") {
+			if (frm.doc.__onload.backflush_raw_materials_based_on == "Material Transferred for Manufacture") {
 				frm.add_custom_button(
 					__("BOM"),
 					() => {
@@ -344,9 +344,9 @@ frappe.ui.form.on("Tool Room Work Order", {
 
 		dialog.fields_dict["operations"].grid.wrapper.find(".grid-add-row").hide();
 
-		let pending_qty = 0;
+		var pending_qty = 0;
 		frm.doc.operations.forEach((data) => {
-			if (data.completed_qty + data.process_loss_qty !== frm.doc.qty) {
+			if (data.completed_qty + data.process_loss_qty != frm.doc.qty) {
 				pending_qty = frm.doc.qty - flt(data.completed_qty) - flt(data.process_loss_qty);
 
 				if (pending_qty) {
@@ -372,7 +372,7 @@ frappe.ui.form.on("Tool Room Work Order", {
 			doc: frm.doc,
 			callback: function (r) {
 				if (r.message) {
-					let doc = frappe.model.sync(r.message)[0];
+					var doc = frappe.model.sync(r.message)[0];
 					frappe.set_route("Form", doc.doctype, doc.name);
 				}
 			},
@@ -397,31 +397,31 @@ frappe.ui.form.on("Tool Room Work Order", {
 	},
 
 	show_progress_for_items: function (frm) {
-		let bars = [];
-		let message = "";
-		let added_min = false;
+		var bars = [];
+		var message = "";
+		var added_min = false;
 
 		// produced qty
-		let title = __("{0} items produced", [frm.doc.produced_qty]);
+		var title = __("{0} items produced", [frm.doc.produced_qty]);
 		bars.push({
 			title: title,
 			width: (frm.doc.produced_qty / frm.doc.qty) * 100 + "%",
 			progress_class: "progress-bar-success",
 		});
-		if (bars[0].width === "0%") {
+		if (bars[0].width == "0%") {
 			bars[0].width = "0.5%";
 			added_min = 0.5;
 		}
 		message = title;
 		// pending qty
 		if (!frm.doc.skip_transfer) {
-			let pending_complete =
+			var pending_complete =
 				frm.doc.material_transferred_for_manufacturing -
 				frm.doc.produced_qty -
 				frm.doc.process_loss_qty;
 			if (pending_complete) {
 
-				let width = (pending_complete / frm.doc.qty) * 100 - added_min;
+				var width = (pending_complete / frm.doc.qty) * 100 - added_min;
 				title = __("{0} items in progress", [pending_complete]);
 				bars.push({
 					title: title,
@@ -432,7 +432,7 @@ frappe.ui.form.on("Tool Room Work Order", {
 			}
 		}
 		if (frm.doc.process_loss_qty) {
-			let process_loss_width = (frm.doc.process_loss_qty / frm.doc.qty) * 100;
+			var process_loss_width = (frm.doc.process_loss_qty / frm.doc.qty) * 100;
 			title = __("{0} items lost during process.", [frm.doc.process_loss_qty]);
 			bars.push({
 				title: title,
@@ -565,7 +565,7 @@ frappe.ui.form.on("Tool Room Work Order Item", {
 		frm.trigger("allow_alternative_item");
 	},
 	source_warehouse: function (frm, cdt, cdn) {
-		let row = locals[cdt][cdn];
+		var row = locals[cdt][cdn];
 		if (!row.item_code) {
 			frappe.throw(__("Please set the Item Code first"));
 		} else if (row.source_warehouse) {
@@ -616,7 +616,7 @@ frappe.ui.form.on("Tool Room Work Order Item", {
 
 frappe.ui.form.on("Tool Room Work Order Operation", {
 	workstation: function (frm, cdt, cdn) {
-		let d = locals[cdt][cdn];
+		var d = locals[cdt][cdn];
 		if (d.workstation) {
 			frappe.call({
 				method: "frappe.client.get",
@@ -640,7 +640,7 @@ frappe.ui.form.on("Tool Room Work Order Operation", {
 
 erpnext.work_order = {
 	set_custom_buttons: function (frm) {
-		let doc = frm.doc;
+		var doc = frm.doc;
 
 		if (doc.docstatus === 1 && doc.status !== "Closed") {
 			frm.add_custom_button(
@@ -655,7 +655,7 @@ erpnext.work_order = {
 		}
 
 		if (doc.docstatus === 1 && !["Closed", "Completed"].includes(doc.status)) {
-			if (doc.status !== "Stopped" && doc.status !== "Completed") {
+			if (doc.status != "Stopped" && doc.status != "Completed") {
 				frm.add_custom_button(
 					__("Stop"),
 					function () {
@@ -663,7 +663,7 @@ erpnext.work_order = {
 					},
 					__("Status")
 				);
-			} else if (doc.status === "Stopped") {
+			} else if (doc.status == "Stopped") {
 				frm.add_custom_button(
 					__("Re-open"),
 					function () {
@@ -674,33 +674,33 @@ erpnext.work_order = {
 			}
 
 			const show_start_btn =
-				frm.doc.skip_transfer || frm.doc.transfer_material_against === "Job Card" ? 0 : 1;
+				frm.doc.skip_transfer || frm.doc.transfer_material_against == "Job Card" ? 0 : 1;
 
 			if (show_start_btn) {
 				let pending_to_transfer = frm.doc.required_items.some(
 					(item) => flt(item.transferred_qty) < flt(item.required_qty)
 				);
-				if (pending_to_transfer && frm.doc.status !== "Stopped") {
+				if (pending_to_transfer && frm.doc.status != "Stopped") {
 					frm.has_start_btn = true;
 					frm.add_custom_button(__("Create Pick List"), function () {
 						erpnext.work_order.create_pick_list(frm);
 					});
-					let start_btn = frm.add_custom_button(__("Start"), function () {
+					var start_btn = frm.add_custom_button(__("Start"), function () {
 						erpnext.work_order.make_se(frm, "Material Transfer for Manufacture");
 					});
 					start_btn.addClass("btn-primary");
 				}
 			}
 
-			if (frm.doc.status !== "Stopped") {
+			if (frm.doc.status != "Stopped") {
 				// If "Material Consumption is check in Manufacturing Settings, allow Material Consumption
-				if (frm.doc.__onload && frm.doc.__onload.material_consumption === 1) {
+				if (frm.doc.__onload && frm.doc.__onload.material_consumption == 1) {
 					if (flt(doc.material_transferred_for_manufacturing) > 0 || frm.doc.skip_transfer) {
 						// Only show "Material Consumption" when required_qty > consumed_qty
-						let counter = 0;
-						let tbl = frm.doc.required_items || [];
-						let tbl_lenght = tbl.length;
-						for (let i = 0, len = tbl_lenght; i < len; i++) {
+						var counter = 0;
+						var tbl = frm.doc.required_items || [];
+						var tbl_lenght = tbl.length;
+						for (var i = 0, len = tbl_lenght; i < len; i++) {
 							let wo_item_qty =
 								frm.doc.required_items[i].transferred_qty ||
 								frm.doc.required_items[i].required_qty;
@@ -709,7 +709,7 @@ erpnext.work_order = {
 							}
 						}
 						if (counter > 0) {
-							let consumption_btn = frm.add_custom_button(
+							var consumption_btn = frm.add_custom_button(
 								__("Material Consumption"),
 								function () {
 									const backflush_raw_materials_based_on =
@@ -765,10 +765,10 @@ erpnext.work_order = {
 	},
 	calculate_cost: function (doc) {
 		if (doc.operations) {
-			let op = doc.operations;
+			var op = doc.operations;
 			doc.planned_operating_cost = 0.0;
-			for (let i = 0; i < op.length; i++) {
-				let planned_operating_cost = flt((flt(op[i].hour_rate) * flt(op[i].time_in_mins)) / 60, 2);
+			for (var i = 0; i < op.length; i++) {
+				var planned_operating_cost = flt((flt(op[i].hour_rate) * flt(op[i].time_in_mins)) / 60, 2);
 				frappe.model.set_value(
 					"Tool Room Work Order Operation",
 					op[i].name,
@@ -896,7 +896,7 @@ erpnext.work_order = {
 			.then((pick_list) => {
 				frappe.model.sync(pick_list);
 				frappe.set_route("Form", pick_list.doctype, pick_list.name);
-			}).catch(err => console.error(err));
+			});
 	},
 
 	make_consumption_se: function (frm, backflush_raw_materials_based_on) {
@@ -919,14 +919,14 @@ erpnext.work_order = {
 				qty: max,
 			},
 			callback: function (r) {
-				let doclist = frappe.model.sync(r.message);
+				var doclist = frappe.model.sync(r.message);
 				frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
 			},
 		});
 	},
 
 	change_work_order_status: function (frm, status) {
-		let method_name = status === "Closed" ? "close_work_order" : "stop_unstop";
+		let method_name = status == "Closed" ? "close_work_order" : "stop_unstop";
 		frappe.call({
 			method: `mold_management.mold_management.doctype.tool_room_work_order.tool_room_work_order.${method_name}`,
 			freeze: true,

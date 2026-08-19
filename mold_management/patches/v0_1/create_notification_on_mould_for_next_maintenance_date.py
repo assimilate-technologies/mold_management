@@ -1,6 +1,5 @@
 import frappe
 
-
 def execute():
     notification_name = "Mould Maintenance {{doc.mould_name}}"
 

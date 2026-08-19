@@ -55,7 +55,8 @@
 //         });
 
 //         if (total_to_create === 0) {
-//             // console.log('Nothing to create.');//             return;
+//             console.log('Nothing to create.');
+//             return;
 //         }
 
 //         // Mark flag first
@@ -109,7 +110,7 @@
 //                 indicator: "green"
 //             });
 
-//             // console.log(`All moulds created (${created}/${total_to_create})`);
+//             console.log(`All moulds created (${created}/${total_to_create})`);
 
 //             // ⭐ IMPORTANT: Final auto-save to remove "Not Saved"
 //             await frm.save();
@@ -180,7 +181,8 @@
 
 //         // ⭐ NEW CONDITION: run only when "is_mould_item" is checked
 //         if (frm.doc.is_mould_item !== 1) {
-//             // console.log("is_mould_item is not checked → skipping mould creation.");//             return;
+//             console.log("is_mould_item is not checked → skipping mould creation.");
+//             return;
 //         }
 
 //         // Only run when Completed & not already created

@@ -1,6 +1,5 @@
 import frappe
 
-
 def execute():
     # Step 1: Create Tab Break for "Mould Details"
     if not frappe.db.exists("Custom Field", {"dt": "Item", "fieldname": "packing_details_tab"}):
@@ -34,11 +33,11 @@ def execute():
             "insert_after": "poly_bag_section"
         }).insert(ignore_permissions=True)
 
-
+    
 
     # Step 3: Create custom fields under the section
     custom_fields = [
-
+        
         {
             "fieldname": "req_poly_bags_sizes",
             "label": "Req Polybag Sizes",
@@ -71,12 +70,12 @@ def execute():
             "fieldtype": "Int",
             "insert_after": "std_pkg_box"
         }
+        
 
-
-
+        
     ]
 
-
+    
 
 
     for field in custom_fields:
@@ -86,6 +85,6 @@ def execute():
                 "dt": "Item",
                 **field
             }).insert(ignore_permissions=True)
-
+    
     frappe.clear_cache()
-
+    

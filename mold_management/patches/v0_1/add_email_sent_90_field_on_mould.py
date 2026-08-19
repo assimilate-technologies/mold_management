@@ -1,10 +1,9 @@
 import frappe
 
-
 def execute():
     # Check if the custom field already exists
     if not frappe.db.exists("Custom Field", "Mould-email_sent_90_percent"):
-
+        
         custom_field = {
             "doctype": "Custom Field",
             "dt": "Mould",

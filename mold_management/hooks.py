@@ -69,6 +69,9 @@ scheduler_events = {
 }
 
 doc_events = {
+    "Item": {
+        "on_update": "mold_management.api.create_mould_and_asset_on_item.create_mould_and_asset_on_item_update"
+    },
    "Job Card": {
         "on_submit": "mold_management.api.mould_shots_updated_on_jo_card_completed_qty.update_mould_usage"
     },

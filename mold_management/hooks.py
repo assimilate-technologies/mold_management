@@ -70,9 +70,7 @@ scheduler_events = {
 }
 
 doc_events = {
-    "Item": {
-        "on_update": "mold_management.api.create_mould_and_asset_on_item.create_mould_and_asset_on_item_update"
-    },
+   
    "Job Card": {
         "on_submit": "mold_management.api.mould_shots_updated_on_jo_card_completed_qty.update_mould_usage"
     },
@@ -85,21 +83,15 @@ doc_events = {
     # },
 
     "Stock Entry": {
-        "on_submit": ["mold_management.api.mould_record_generation_on_stock_entry.create_mould_on_stock_entry",
-                      "mold_management.api.allow_non_stock_item_in_stock_entry.check_non_stock_items"
+        "on_submit": [
+            "mold_management.api.mould_record_generation_on_stock_entry.create_mould_on_stock_entry",
+            "mold_management.api.allow_non_stock_item_in_stock_entry.check_non_stock_items"
         ]
     },
 
     "Mould Maintenance Order": {
         "on_update": "mold_management.api.reset_current_shot_zero.reset_mould_usage_on_submit"
-    },
-
-    # "Stock Entry": {
-    #     "on_submit": [
-    #         "mold_management.api.mould_record_generation_on_stock_entry.create_mould_on_stock_entry",
-    #         # "mold_management.api.create_asset_on_stock_entry_submit.create_pr_and_asset_from_stock_entry"
-    #     ]
-    # }
+    }
 
 }
 

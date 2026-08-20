@@ -272,10 +272,18 @@ def create_mould(wo, doc):
 def create_asset_from_work_order(wo):
     ensure_location("Pune")
 
+    company = (
+        frappe.defaults.get_user_default("company")
+        or frappe.defaults.get_global_default("company")
+        or frappe.db.get_value("Company", {}, "name")
+    )
+
     asset = frappe.get_doc({
         "doctype": "Asset",
         "asset_name": wo.mould_name,
         "item_code": wo.production_item,
+        "company": company,
+        "cost_center": get_asset_cost_center(company),
         "location": "Pune",
 
         # -------------------------------
@@ -297,6 +305,18 @@ def create_asset_from_work_order(wo):
     asset.submit()
 
     return asset
+
+
+def get_asset_cost_center(company):
+    cost_center = frappe.get_cached_value("Company", company, "depreciation_cost_center")
+    if not cost_center:
+        cost_center = frappe.db.get_value(
+            "Cost Center",
+            {"company": company, "is_group": 0, "disabled": 0},
+            "name",
+            order_by="creation",
+        )
+    return cost_center
 
 
 def ensure_location(location_name):

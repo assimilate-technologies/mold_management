@@ -61,6 +61,7 @@ doctype_js = {
 }
 
 
+
 scheduler_events = {
     "daily": [
         "mold_management.mold_management.doctype.mould_maintenance_order.mould_maintenance_order.update_mould_maintenance_order_status",

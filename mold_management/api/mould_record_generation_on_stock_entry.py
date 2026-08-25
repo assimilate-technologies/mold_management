@@ -150,7 +150,6 @@
 import frappe
 from frappe.utils import today
 
-
 def create_mould_on_stock_entry(doc, method):
     """
     Create Mould records and optionally Asset
@@ -183,7 +182,7 @@ def create_mould_on_stock_entry(doc, method):
             asset_created = None
 
             # ==================================================
-            # CASE 1 → ONLY MOULD (stock item, customer provided)
+            # CASE 1 → ONLY MOULD
             # is_mould_item = Yes
             # maintain_stock = Yes
             # is_customer_provided_item = Yes
@@ -205,7 +204,7 @@ def create_mould_on_stock_entry(doc, method):
                 )
 
             # ==================================================
-            # CASE 2 → MOULD + ASSET (non-stock, fixed asset)
+            # CASE 2 → MOULD + ASSET
             # is_mould_item = Yes
             # maintain_stock = No
             # is_customer_provided_item = No
@@ -229,58 +228,10 @@ def create_mould_on_stock_entry(doc, method):
                     f"for Work Order {wo.name}"
                 )
 
-            # ==================================================
-            # CASE 3 → ONLY MOULD (stock item, also fixed asset)
-            # is_mould_item = Yes
-            # maintain_stock = Yes
-            # is_fixed_asset = Yes
-            # (Customer provided doesn't matter - asset won't be created for stock items)
-            # ==================================================
-            elif (
-                wo.is_mould_item
-                and wo.maintain_stock
-                and wo.is_fixed_asset
-            ):
-                for _ in range(qty):
-                    create_mould(wo, doc)
-                    mould_created += 1
-
-                message = (
-                    f"{mould_created} Mould record(s) created "
-                    f"for Work Order {wo.name}. "
-                    f"Asset not created because Maintain Stock is checked."
-                )
-
-            # ==================================================
-            # CASE 4 → ONLY MOULD (stock item, not customer provided, not fixed asset)
-            # is_mould_item = Yes
-            # maintain_stock = Yes
-            # is_customer_provided_item = No
-            # is_fixed_asset = No
-            # ==================================================
-            elif (
-                wo.is_mould_item
-                and wo.maintain_stock
-                and not wo.is_customer_provided_item
-                and not wo.is_fixed_asset
-            ):
-                for _ in range(qty):
-                    create_mould(wo, doc)
-                    mould_created += 1
-
-                message = (
-                    f"{mould_created} Mould record(s) created "
-                    f"for Work Order {wo.name}"
-                )
-
             else:
                 message = (
                     f"Mould not created: Work Order {wo.name} "
-                    f"does not match any valid configuration. "
-                    f"is_mould_item={wo.is_mould_item}, "
-                    f"maintain_stock={wo.maintain_stock}, "
-                    f"is_customer_provided_item={wo.is_customer_provided_item}, "
-                    f"is_fixed_asset={wo.is_fixed_asset}"
+                    f"does not match any valid configuration"
                 )
 
     # --------------------------------------------------
@@ -319,10 +270,20 @@ def create_mould(wo, doc):
 # Helper → Create & Submit Asset (MANDATORY SAFE)
 # ==================================================
 def create_asset_from_work_order(wo):
+    ensure_location("Pune")
+
+    company = (
+        frappe.defaults.get_user_default("company")
+        or frappe.defaults.get_global_default("company")
+        or frappe.db.get_value("Company", {}, "name")
+    )
+
     asset = frappe.get_doc({
         "doctype": "Asset",
         "asset_name": wo.mould_name,
         "item_code": wo.production_item,
+        "company": company,
+        "cost_center": get_asset_cost_center(company),
         "location": "Pune",
 
         # -------------------------------
@@ -331,15 +292,35 @@ def create_asset_from_work_order(wo):
         "purchase_date": today(),
         "available_for_use_date": today(),
         "gross_purchase_amount": 1,
+        "net_purchase_amount": 1,
 
         # Optional
         "purchase_receipt": None,
         "is_existing_asset": 0,
         "maintenance_required": 1
-
+        
     })
 
     asset.insert(ignore_permissions=True)
     asset.submit()
 
     return asset
+
+
+def get_asset_cost_center(company):
+    cost_center = frappe.get_cached_value("Company", company, "depreciation_cost_center")
+    if not cost_center:
+        cost_center = frappe.db.get_value(
+            "Cost Center",
+            {"company": company, "is_group": 0, "disabled": 0},
+            "name",
+            order_by="creation",
+        )
+    return cost_center
+
+
+def ensure_location(location_name):
+    if not frappe.db.exists("Location", location_name):
+        frappe.get_doc({"doctype": "Location", "location_name": location_name}).insert(
+            ignore_permissions=True
+        )

@@ -1,6 +1,5 @@
 import frappe
 
-
 def execute():
     if not frappe.db.exists("Custom Field", {
         "dt": "Work Order",
@@ -14,7 +13,7 @@ def execute():
             "fieldtype": "Link",
             "options": "Work Order Routing",
             "insert_after": "transfer_material_against"
-
+            
         }).insert(ignore_permissions=True)
 
     frappe.clear_cache()

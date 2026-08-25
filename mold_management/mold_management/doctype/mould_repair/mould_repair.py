@@ -1,22 +1,22 @@
 # Copyright (c) 2017, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-import erpnext
 import frappe
+from frappe import _
+from frappe.utils import add_months, cint, flt, get_link_to_form, getdate, time_diff_in_hours
+
+import erpnext
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 	get_accounting_dimensions,
 )
 from erpnext.accounts.general_ledger import make_gl_entries
-from erpnext.assets.doctype.asset.asset import get_asset_account
-from erpnext.assets.doctype.asset_activity.asset_activity import add_asset_activity
+# from erpnext.assets.doctype.asset.asset import get_asset_account
+# from erpnext.assets.doctype.asset_activity.asset_activity import add_asset_activity
+# from mold_management.mold_management.doctype.mould_depreciation_schedule.mould_depreciation_schedule import (
+# 	get_depr_schedule,
+# 	make_new_active_asset_depr_schedules_and_cancel_current_ones,
+# )
 from erpnext.controllers.accounts_controller import AccountsController
-from frappe import _
-from frappe.utils import add_months, cint, flt, get_link_to_form, getdate, time_diff_in_hours
-
-from mold_management.mold_management.doctype.mould_depreciation_schedule.mould_depreciation_schedule import (
-	get_depr_schedule,
-	make_new_active_asset_depr_schedules_and_cancel_current_ones,
-)
 
 
 class MouldRepair(AccountsController):
@@ -28,8 +28,8 @@ class MouldRepair(AccountsController):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		from mold_management.mold_management.doctype.mould_repair_consumed_item.mould_repair_consumed_item import (
-			MouldRepairConsumedItem,
+		from erpnext.assets.doctype.asset_repair_consumed_item.asset_repair_consumed_item import (
+			AssetRepairConsumedItem,
 		)
 
 		actions_performed: DF.LongText | None

@@ -1,7 +1,6 @@
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
 
-
 def execute():
     print("Adding custom fields to Work Order Item...")
 
@@ -89,7 +88,7 @@ def execute():
             "fetch_from": "item_code.mould_name"
         },
         {
-
+            
             "fieldname": "moulding_yr",
             "label": "Mould Type",
             "fieldtype": "Link",

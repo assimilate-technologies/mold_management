@@ -1,7 +1,6 @@
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
 
-
 def execute():
     # Hidden checkbox on Work Order that fetches the value from selected Item (production_item)
     field_is_moulding = {
@@ -29,4 +28,4 @@ def execute():
         create_custom_field("Work Order", field_mould)
         frappe.clear_cache()
     except Exception as e:
-        frappe.log_error(f"Error adding mould fields to Work Order: {e!s}", "add_mould_in_workorder")
+        frappe.log_error(f"Error adding mould fields to Work Order: {str(e)}", "add_mould_in_workorder")

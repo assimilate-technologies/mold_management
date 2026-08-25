@@ -2,6 +2,9 @@
 # See license.txt
 
 import frappe
+from frappe.tests.utils import FrappeTestCase
+from frappe.utils import cstr, flt
+
 from erpnext.assets.doctype.asset.depreciation import (
 	post_depreciation_entries,
 )
@@ -10,8 +13,6 @@ from erpnext.assets.doctype.asset_depreciation_schedule.asset_depreciation_sched
 	get_asset_depr_schedule_doc,
 	get_depr_schedule,
 )
-from frappe.tests.utils import FrappeTestCase
-from frappe.utils import cstr, flt
 
 
 class TestAssetDepreciationSchedule(FrappeTestCase):

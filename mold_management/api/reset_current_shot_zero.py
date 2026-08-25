@@ -75,7 +75,6 @@
 import frappe
 from frappe.utils import flt
 
-
 def reset_mould_usage_on_submit(doc, method=None):
     # Run only after submit
     if doc.docstatus != 1:

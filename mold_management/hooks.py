@@ -35,10 +35,9 @@ after_migrate = [
     #  "mold_management.patches.v0_1.add_selection_of_tool_on_item.execute",
     #  "mold_management.patches.v0_1.add_moulds_field_on_item.execute",
     #  "mold_management.patches.v0_1.add_mould_name_field_on_item.execute",
-     # These Item custom fields are now handled by aims_customization's monolithic patch
-     # "mold_management.patches.v0_1.add_packing_details_tab_on_item.execute",
-     # "mold_management.patches.v0_1.add_part_specification_tab_on_item.execute",
-     # "mold_management.patches.v0_1.add_rework_and_checking_details.execute",
+     "mold_management.patches.v0_1.add_packing_details_tab_on_item.execute",
+     "mold_management.patches.v0_1.add_part_specification_tab_on_item.execute",
+     "mold_management.patches.v0_1.add_rework_and_checking_details.execute",
 
      "mold_management.patches.v0_1.add_is_mold_item_field_on_item.execute",
      "mold_management.patches.v0_1.add_other_than_mould_or_moulding_item.execute",
@@ -62,6 +61,7 @@ doctype_js = {
 }
 
 
+
 scheduler_events = {
     "daily": [
         "mold_management.mold_management.doctype.mould_maintenance_order.mould_maintenance_order.update_mould_maintenance_order_status",
@@ -70,6 +70,7 @@ scheduler_events = {
 }
 
 doc_events = {
+   
    "Job Card": {
         "on_submit": "mold_management.api.mould_shots_updated_on_jo_card_completed_qty.update_mould_usage"
     },
@@ -77,28 +78,20 @@ doc_events = {
         "on_update": "mold_management.api.if_current_usage_count_reach_90_trigger_notification.check_mould_usage"
     },
 
-    "Item": {
-        "on_update": "mold_management.api.create_mould_and_asset_on_item.create_mould_and_asset_on_item_update"
-    },
-
     # "Mould Maintenance": {
     #     "on_update": "mold_management.api.update_last_maintenence_date_and_next_maintenance_date.update_mould_dates_from_maintenance"
     # },
 
     "Stock Entry": {
-        "on_submit": "mold_management.api.allow_non_stock_item_in_stock_entry.check_non_stock_items"
+        "on_submit": [
+            "mold_management.api.mould_record_generation_on_stock_entry.create_mould_on_stock_entry",
+            "mold_management.api.allow_non_stock_item_in_stock_entry.check_non_stock_items"
+        ]
     },
 
     "Mould Maintenance Order": {
         "on_update": "mold_management.api.reset_current_shot_zero.reset_mould_usage_on_submit"
-    },
-
-    # "Stock Entry": {
-    #     "on_submit": [
-    #         "mold_management.api.mould_record_generation_on_stock_entry.create_mould_on_stock_entry",
-    #         # "mold_management.api.create_asset_on_stock_entry_submit.create_pr_and_asset_from_stock_entry"
-    #     ]
-    # }
+    }
 
 }
 

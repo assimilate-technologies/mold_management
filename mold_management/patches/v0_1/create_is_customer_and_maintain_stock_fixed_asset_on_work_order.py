@@ -1,7 +1,6 @@
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_field
 
-
 def execute():
     print("Adding custom fields to Work Order...")
 
@@ -30,7 +29,7 @@ def execute():
             "hidden":1,
             "fetch_from": "production_item.is_customer_provided_item",
         },
-
+        
     ]
 
     for field in fields:

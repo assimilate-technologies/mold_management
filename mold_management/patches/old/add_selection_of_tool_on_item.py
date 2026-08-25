@@ -1,6 +1,5 @@
 import frappe
 
-
 def execute():
     # Fieldname for internal use
     fieldname = "mould_selection_table"

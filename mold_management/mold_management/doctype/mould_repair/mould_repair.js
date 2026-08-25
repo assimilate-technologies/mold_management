@@ -77,7 +77,7 @@ frappe.ui.form.on("Mould Repair", {
 	},
 
 	repair_status: (frm) => {
-		if (frm.doc.completion_date && frm.doc.repair_status === "Completed") {
+		if (frm.doc.completion_date && frm.doc.repair_status == "Completed") {
 			frappe.call({
 				method: "mold_management.assets.doctype.asset_repair.asset_repair.get_downtime",
 				args: {
@@ -92,7 +92,7 @@ frappe.ui.form.on("Mould Repair", {
 			});
 		}
 
-		if (frm.doc.repair_status === "Completed" && !frm.doc.completion_date) {
+		if (frm.doc.repair_status == "Completed" && !frm.doc.completion_date) {
 			frm.set_value("completion_date", frappe.datetime.now_datetime());
 		}
 	},
@@ -151,7 +151,7 @@ frappe.ui.form.on("Mould Repair", {
 
 frappe.ui.form.on("Mould Repair Consumed Item", {
 	warehouse: function (frm, cdt, cdn) {
-		let item = locals[cdt][cdn];
+		var item = locals[cdt][cdn];
 
 		if (!item.item_code) {
 			frappe.msgprint(__("Please select an item code before setting the warehouse."));
@@ -179,7 +179,7 @@ frappe.ui.form.on("Mould Repair Consumed Item", {
 	},
 
 	consumed_quantity: function (frm, cdt, cdn) {
-		let row = locals[cdt][cdn];
+		var row = locals[cdt][cdn];
 		frappe.model.set_value(cdt, cdn, "total_value", row.consumed_quantity * row.valuation_rate);
 	},
 
@@ -213,6 +213,6 @@ frappe.ui.form.on("Mould Repair Consumed Item", {
 					}
 				});
 			}
-		}).catch(err => console.error(err));
+		});
 	},
 });

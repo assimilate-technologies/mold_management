@@ -8,8 +8,8 @@ frappe.ui.form.on("Mould Depreciation Schedule", {
 	},
 
 	make_schedules_editable: function (frm) {
-		let is_manual_hence_editable = frm.doc.depreciation_method === "Manual" ? true : false;
-		let is_shift_hence_editable = frm.doc.shift_based ? true : false;
+		var is_manual_hence_editable = frm.doc.depreciation_method === "Manual" ? true : false;
+		var is_shift_hence_editable = frm.doc.shift_based ? true : false;
 
 		frm.toggle_enable(
 			"depreciation_schedule",
@@ -32,7 +32,7 @@ frappe.ui.form.on("Mould Depreciation Schedule", {
 
 frappe.ui.form.on("Depreciation Schedule", {
 	make_depreciation_entry: function (frm, cdt, cdn) {
-		let row = locals[cdt][cdn];
+		var row = locals[cdt][cdn];
 		if (!row.journal_entry) {
 			frappe.call({
 				method: "erpnext.assets.doctype.asset.depreciation.make_depreciation_entry",
@@ -55,9 +55,9 @@ frappe.ui.form.on("Depreciation Schedule", {
 });
 
 erpnext.asset.set_accumulated_depreciation = function (frm) {
-	if (frm.doc.depreciation_method !== "Manual") return;
+	if (frm.doc.depreciation_method != "Manual") return;
 
-	let accumulated_depreciation = flt(frm.doc.opening_accumulated_depreciation);
+	var accumulated_depreciation = flt(frm.doc.opening_accumulated_depreciation);
 
 	$.each(frm.doc.depreciation_schedule || [], function (i, row) {
 		accumulated_depreciation += flt(row.depreciation_amount);
